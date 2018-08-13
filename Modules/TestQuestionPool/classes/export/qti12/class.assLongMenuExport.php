@@ -223,7 +223,7 @@ class assLongMenuExport extends assQuestionExport
 			// qti flow_mat
 			$xml->xmlStartTag("flow_mat");
 			$fb = $this->object->feedbackOBJ->getSpecificAnswerFeedbackExportPresentation(
-				$this->object->getId(), $i
+				$this->object->getId(),0, $i
 			);
 			$this->object->addQTIMaterial($xml, $fb);
 			$xml->xmlEndTag("flow_mat");
