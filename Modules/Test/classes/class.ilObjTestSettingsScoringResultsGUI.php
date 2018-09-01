@@ -801,6 +801,24 @@ class ilObjTestSettingsScoringResultsGUI extends ilTestSettingsGUI
 			}
 		}
 	}
+	
+	private function isScoreReportingAvailable()
+	{
+		if (!$this->testOBJ->getScoreReporting())
+		{
+			return false;
+		}
+		
+		if (
+			$this->testOBJ->getScoreReporting() == ilObjTest::SCORE_REPORTING_DATE
+			&& $this->testOBJ->getReportingDate() > time()
+		)
+		{
+			return false;
+		}
+		
+		return true;
+	}
 
 	private function areScoringSettingsWritable()
 	{
@@ -809,7 +827,7 @@ class ilObjTestSettingsScoringResultsGUI extends ilTestSettingsGUI
 			return true;
 		}
 
-		if( !$this->testOBJ->isScoreReportingAvailable() )
+		if( !$this->isScoreReportingAvailable() )
 		{
 			return true;
 		}

@@ -12158,21 +12158,6 @@ function getAnswerFeedbackPoints()
 		
 		return $this->participantDataExist;
 	}
-
-	public function isScoreReportingAvailable()
-	{
-		if (!$this->getScoreReporting())
-		{
-			return false;
-		}
-
-		if ($this->getScoreReporting() == self::SCORE_REPORTING_DATE && $this->getReportingDate() > time())
-		{
-			return false;
-		}
-
-		return true;
-	}
 	
 	public function recalculateScores($preserve_manscoring = false)
 	{
