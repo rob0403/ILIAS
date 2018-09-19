@@ -1622,7 +1622,7 @@ class ilInitialisation
 			if(
 				$cmd == "showTermsOfService" || $cmd == "showClientList" || 
 				$cmd == 'showAccountMigration' || $cmd == 'migrateAccount' ||
-				$cmd == 'processCode' || $cmd == 'showLoginPage' || $cmd == 'doStandardAuthentication'
+				$cmd == 'processCode' || $cmd == 'showLoginPage' || $cmd == 'doStandardAuthentication' || $cmd == 'doCasAuthentication'
 			)
 			{
 				ilLoggerFactory::getLogger('auth')->debug('Blocked authentication for cmd: ' . $cmd);
@@ -1639,7 +1639,7 @@ class ilInitialisation
 		}
 
 		if($a_current_script == 'goto.php' && in_array($_GET['target'], array(
-			'usr_registration', 'usr_nameassist', 'usr_pwassist'
+			'usr_registration', 'usr_nameassist', 'usr_pwassist', 'usr_agreement'
 		)))
 		{
 			ilLoggerFactory::getLogger('auth')->debug('Blocked authentication for goto target: ' . $_GET['target']);
