@@ -20,6 +20,8 @@ class ilTestPassesSelector
 	
 	private $passes = null;
 	
+	private $testPassedOnceCache = array();
+	
 	public function __construct(ilDBInterface $db, ilObjTest $testOBJ)
 	{
 		$this->db = $db;
@@ -131,6 +133,11 @@ class ilTestPassesSelector
 		return $reportablePasses;
 	}
 	
+	public function hasReportablePasses()
+	{
+		return (bool)count($this->getReportablePasses());
+	}
+	
 	private function fetchReportablePasses($existingPasses)
 	{
 		$lastPass = $this->fetchLastPass($existingPasses);
@@ -197,6 +204,15 @@ class ilTestPassesSelector
 					return true;
 				}
 
+				return $this->isClosedPass($pass);
+				
+			case ilObjTest::SCORE_REPORTING_AFTER_PASSED:
+				
+				if( !$this->hasTestPassedOnce($this->getActiveId()) )
+				{
+					return false;
+				}
+				
 				return $this->isClosedPass($pass);
 		}
 		
@@ -273,5 +289,27 @@ class ilTestPassesSelector
 		
 		$passes = $this->getLazyLoadedPasses();
 		return $passes[$this->getLastFinishedPass()]['tstamp'];
+	}
+	
+	public function hasTestPassedOnce($activeId)
+	{
+		global $DIC; /* @var ILIAS\DI\Container $DIC */
+		
+		if( !isset($this->testPassedOnceCache[$activeId]) )
+		{
+			$this->testPassedOnceCache[$activeId] = false;
+			
+			$res = $DIC->database()->queryF(
+				"SELECT passed_once FROM tst_result_cache WHERE active_fi = %s",
+				array('integer'), array($activeId)
+			);
+			
+			while($row = $DIC->database()->fetchAssoc($res))
+			{
+				$this->testPassedOnceCache[$activeId] = (bool)$row['passed_once'];
+			}
+		}
+		
+		return $this->testPassedOnceCache[$activeId];
 	}
 }
