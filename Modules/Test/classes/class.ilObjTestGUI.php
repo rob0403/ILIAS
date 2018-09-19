@@ -4942,7 +4942,7 @@ class ilObjTestGUI extends ilObjectGUI
 	}
 
 	// begin-patch lok
-	public  function applyTemplate($templateData, ilObjTest $object)
+	public  function applyTemplate($templateData, $object)
 	// end-patch lok
 	{
 		// map formFieldName => setterName
@@ -4974,9 +4974,7 @@ class ilObjTestGUI extends ilObjectGUI
 			'autosave' => null, // handled specially in loop below
 			'chb_shuffle_questions' => 'setShuffleQuestions',
 			'offer_hints' => 'setOfferingQuestionHintsEnabled',
-			'instant_feedback_contents' => 'setInstantFeedbackOptionsByArray',
-			'instant_feedback_trigger' => 'setForceInstantFeedbackEnabled',
-			'answer_fixation_handling' => null, // handled specially in loop below
+			'instant_feedback' => 'setScoringFeedbackOptionsByArray',
 			'obligations_enabled' => 'setObligationsEnabled',
 
 			// test sequence properties
@@ -5066,32 +5064,6 @@ class ilObjTestGUI extends ilObjectGUI
 						$object->setRedirectionMode(REDIRECT_NONE);
 						$object->setRedirectionUrl('');
 					}
-					break;
-					
-				case 'answer_fixation_handling':
-					switch($templateData[$field]['value'])
-					{
-						case ilObjTestSettingsGeneralGUI::ANSWER_FIXATION_NONE:
-							$object->setInstantFeedbackAnswerFixationEnabled(false);
-							$object->setFollowupQuestionAnswerFixationEnabled(false);
-							break;
-							
-						case ilObjTestSettingsGeneralGUI::ANSWER_FIXATION_ON_INSTANT_FEEDBACK:
-							$object->setInstantFeedbackAnswerFixationEnabled(true);
-							$object->setFollowupQuestionAnswerFixationEnabled(false);
-							break;
-						
-						case ilObjTestSettingsGeneralGUI::ANSWER_FIXATION_ON_FOLLOWUP_QUESTION:
-							$object->setInstantFeedbackAnswerFixationEnabled(false);
-							$object->setFollowupQuestionAnswerFixationEnabled(true);
-							break;
-						
-						case ilObjTestSettingsGeneralGUI::ANSWER_FIXATION_ON_IFB_OR_FUQST:
-							$object->setInstantFeedbackAnswerFixationEnabled(true);
-							$object->setFollowupQuestionAnswerFixationEnabled(true);
-							break;
-					}
-					break;
 			}
 		}
 	}
