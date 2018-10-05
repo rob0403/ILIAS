@@ -13,7 +13,7 @@
  * @ilCtrl_Calls ilAssQuestionPreviewGUI: ilAssQuestionHintRequestGUI
  * @ilCtrl_Calls ilAssQuestionPreviewGUI: ilAssGenFeedbackPageGUI
  * @ilCtrl_Calls ilAssQuestionPreviewGUI: ilAssSpecFeedbackPageGUI
-
+ * @ilCtrl_Calls ilAssQuestionPreviewGUI: ilNoteGUI
  */
 class ilAssQuestionPreviewGUI
 {
@@ -175,6 +175,16 @@ class ilAssQuestionPreviewGUI
 				$forwarder->forward();
 				break;
 			
+			case 'ilnotegui':
+				
+				$notesGUI = new ilNoteGUI($this->questionOBJ->getObjId(), $this->questionOBJ->getId(), 'quest');
+				$notesGUI->enablePublicNotes(true);
+				$notesGUI->enablePublicNotesDeletion(true);
+				$notesPanelHTML = $this->ctrl->forwardCommand($notesGUI);
+				$this->showCmd($notesPanelHTML);
+				break;
+			
+			
 			default:
 
 				$cmd = $this->ctrl->getCmd(self::CMD_SHOW).'Cmd';
@@ -191,7 +201,19 @@ class ilAssQuestionPreviewGUI
 		return $this->ctrl->getFormAction($this, self::CMD_SHOW) . '#' . self::FEEDBACK_FOCUS_ANCHOR;
 	}
 	
-	private function showCmd()
+	protected function isCommentingRequired()
+	{
+		global $DIC; /* @var ILIAS\DI\Container $DIC */
+		
+		if( $this->previewSettings->isTestRefId() )
+		{
+			return false;
+		}
+		
+		return (bool)$DIC->rbac()->system()->checkAccess('write', (int)$_GET['ref_id']);
+	}
+	
+	private function showCmd($notesPanelHTML = '')
 	{
 		$tpl = new ilTemplate('tpl.qpl_question_preview.html', true, true, 'Modules/TestQuestionPool');
 
@@ -204,6 +226,12 @@ class ilAssQuestionPreviewGUI
 		$this->populateQuestionNavigation($tpl);
 
 		$this->handleInstantResponseRendering($tpl);
+		
+		if( $this->isCommentingRequired() )
+		{
+			$this->questionGUI->addHeaderAction();
+			$this->populateNotesPanel($tpl, $notesPanelHTML);
+		}
 		
 		$this->tpl->setContent($tpl->get());
 	}
@@ -501,5 +529,17 @@ class ilAssQuestionPreviewGUI
 		$shuffler->setSeed($this->previewSession->getRandomizerSeed());		
 		
 		return $shuffler;
+	}
+	
+	protected function populateNotesPanel(ilTemplate $tpl, $notesPanelHTML)
+	{
+		if( !strlen($notesPanelHTML) )
+		{
+			$notesPanelHTML = $this->questionGUI->getNotesHTML();
+		}
+		
+		$tpl->setCurrentBlock('notes_panel');
+		$tpl->setVariable('NOTES_PANEL', $notesPanelHTML);
+		$tpl->parseCurrentBlock();
 	}
 }
