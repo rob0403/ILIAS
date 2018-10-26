@@ -14,6 +14,22 @@
 // to the corresponding mode!
 // Language file names refer to ISO 639, see: http://www.oasis-open.org/cover/iso639a.html
 <!-- language file start -->
+crs#:#crs_shorten_breadcrumb#:#Breadcrumb
+crs#:#crs_sys_default#:#System Default
+crs#:#crs_breadcrumb_crs_only#:#Start with Course
+crs#:#crs_breadcrumb_full_path#:#Full Path
+rep#:#rep_breadcr_crs#:#Breadcrumb starts with course
+rep#:#rep_default#:#Default
+rep#:#rep_breadcr_crs_overwrite#:#Setting is changeable on course level
+rep#:#rep_breadcr_crs_overwrite_not#:#Setting is not changeable on course level
+obj#:#obj_show_title_and_icon#:#Title und Icon anzeigen
+obj#:#obj_show_header_actions#:#Aktionen im Header anzeigen
+cont#:#cont_list_presentation#:#Anzeige der Objekte
+cont#:#cont_item_list#:#Liste
+cont#:#cont_tile_view#:#Kacheln
+fold#:#fold_presentation#:#Präsentation
+obj#:#obj_tile_image#:#Kachelbild
+obj#:#obj_tile_image_info#:#Das Kachebild wird genutzt, wenn der übergeordnete Container (Kurs, Gruppe, Ordner) die Kachelansicht aktiviert.
 common#:#obj_ltis#:#LTI
 common#:#obj_ltis_desc#:#Learning Tools Interoperability
 commocommon#:#lti_outcome#:#Übermittlung LTI-Lernfortschritt
@@ -14571,3 +14587,12 @@ exc#:#exc_submission_file#:#Submission File
 exc#:#exc_submission_text#:#Submission Text
 common#:#open#:#Open
 exc#:#exc_down_files_started#:#Download of submission files has started.
+exc#:#exc_fixed_date#:#Festes Datum
+exc#:#exc_fixed_date_info#:#Alle Teilnehmenden erhalten zunächst das gleiche feste Abgabedatum.
+exc#:#exc_relative_date#:#Relatives Datum
+exc#:#exc_relative_date_info#:#Das Abgabedatum ergibt sich aus dem Bearbeitungszeitraum und dem durch den Teilnehmer gewählten Startzeitpunkt.
+exc#:#exc_earliest_start_time#:#Frühester Starttermin
+exc#:#exc_rem_time_after_start#:#Bearbeitungszeitraum nach Start
+exc#:#exc_start_assignment#:#Übungseinheit starten
+exc#:#exc_needs_fixed_deadline#:#Diese Funktion benötigt ein festes Abgabedatum.
+exc#:#exc_tbl_calculated_deadline#:#Errechneter Abgabetermin

@@ -14,6 +14,22 @@
 // to the corresponding mode!
 // Language file names refer to ISO 639, see: http://www.oasis-open.org/cover/iso639a.html
 <!-- language file start -->
+crs#:#crs_shorten_breadcrumb#:#Breadcrumb
+crs#:#crs_sys_default#:#System Default
+crs#:#crs_breadcrumb_crs_only#:#Start with Course
+crs#:#crs_breadcrumb_full_path#:#Full Path
+rep#:#rep_breadcr_crs#:#Breadcrumb starts with course
+rep#:#rep_default#:#Default
+rep#:#rep_breadcr_crs_overwrite#:#Setting is changeable on course level
+rep#:#rep_breadcr_crs_overwrite_not#:#Setting is not changeable on course level
+obj#:#obj_show_title_and_icon#:#Show Title and Icon
+obj#:#obj_show_header_actions#:#Show Header Actions
+cont#:#cont_list_presentation#:#Item Presentation
+cont#:#cont_item_list#:#List
+cont#:#cont_tile_view#:#Tiles
+obj#:#obj_tile_image#:#Tile Image
+obj#:#obj_tile_image_info#:#The tile image will be used, if the container (course, folder, group, ...) activates the tile view presentation.
+fold#:#fold_presentation#:#Folder Presentation
 common#:#obj_ltis#:#LTI
 common#:#obj_ltis_desc#:#Learning Tools Interoperability
 common#:#lti_outcome#:#LTI Lernfortschritt Benachrichtigung
@@ -14589,7 +14605,6 @@ exc#:#exc_submission_file#:#Submission File
 exc#:#exc_submission_text#:#Submission Text
 common#:#open#:#Open
 exc#:#exc_down_files_started#:#Download of submission files has started.
-survey#:#svy_participant#:#Participant
 book#:#participants#:#Participants
 book#:#book_assign_object#:#Assign Booking Object
 book#:#book_assign#:#Assign
@@ -14597,3 +14612,12 @@ book#:#book_assign_participant#:#Assign to Participant
 book#:#book_deassign#:#Deassign
 book#:#book_participant_assigned#:#Participant(s) assigned
 book#:#book_participant_already_assigned#:#Participant(s) already assigned.
+exc#:#exc_fixed_date#:#Fixed Date
+exc#:#exc_fixed_date_info#:#Initially all users get the same fixed deadline.
+exc#:#exc_relative_date#:#Relative Date
+exc#:#exc_relative_date_info#:#The deadline is set individually relative to the time when a user started the assignment.
+exc#:#exc_earliest_start_time#:#Earliest Start Time
+exc#:#exc_rem_time_after_start#:#Remaining Time after Start
+exc#:#exc_start_assignment#:#Start Assignment
+exc#:#exc_needs_fixed_deadline#:#This feature only works with a fixed deadline.
+exc#:#exc_tbl_calculated_deadline#:#Calculated Deadline
