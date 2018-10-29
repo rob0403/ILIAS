@@ -284,7 +284,7 @@ class ilAuthProviderLDAP extends ilAuthProvider implements ilAuthProviderInterfa
 		$as_array = array_change_key_case(array($a_string => $a_string));
 		foreach($as_array as $key => $string)
 		{
-			return $key;
+			return strtolower($key);
 		}
 	}
 

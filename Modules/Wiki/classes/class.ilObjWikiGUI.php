@@ -1659,7 +1659,11 @@ class ilObjWikiGUI extends ilObjectGUI
 			$html = preg_replace("/src=\"\\.\\//ims", "src=\"" . ILIAS_HTTP_PATH . "/", $html);
 			$html = preg_replace("/href=\"\\.\\//ims", "href=\"" . ILIAS_HTTP_PATH . "/", $html);
 			$pdf_factory = new ilHtmlToPdfTransformerFactory();
-			$pdf_factory->deliverPDFFromHTMLString($html, "wiki.pdf", ilHtmlToPdfTransformerFactory::PDF_OUTPUT_DOWNLOAD, "Wiki", "ContentExport");
+			//$pdf_factory->deliverPDFFromHTMLString($html, "wiki.pdf", ilHtmlToPdfTransformerFactory::PDF_OUTPUT_DOWNLOAD, "Wiki", "ContentExport");
+                       ilUtil::createDirectory(ilUtil::getWebspaceDir()."/pdf_out");
+			$webdir = ilUtil::removeTrailingPathSeparators(CLIENT_WEB_DIR) . "/pdf_out/"; //jh 
+                       $pdf_factory->deliverPDFFromHTMLString($html, $webdir."wiki.pdf", ilHtmlToPdfTransformerFactory::PDF_OUTPUT_DOWNLOAD, "Wiki", "ContentExport"); //jh
+
 		}
 
 	}	
