@@ -696,7 +696,7 @@ class ilMail
 		{
 			$a_m_message = $this->replacePlaceholders($a_m_message, $a_user_id);
 		}
-		$a_m_message = $this->formatLinebreakMessage($a_m_message);
+//		$a_m_message = $this->formatLinebreakMessage($a_m_message); //mg1023
 
 		if(!$a_user_id)		$a_user_id = '0';
 		if(!$a_folder_id)	$a_folder_id = '0';
@@ -864,7 +864,8 @@ class ilMail
 
 			if(count($to) > 0 || count($bcc) > 0)
 			{
-				$this->sendMimeMail(implode(',', $to), '', implode(',', $bcc), $a_subject, $this->formatLinebreakMessage($a_message), $a_attachments);
+//				$this->sendMimeMail(implode(',', $to), '', implode(',', $bcc), $a_subject, $this->formatLinebreakMessage($a_message), $a_attachments); //mg1023
+				$this->sendMimeMail(implode(',', $to), '', implode(',', $bcc), $a_subject, $a_message, $a_attachments);
 			}
 		}
 		else
@@ -936,7 +937,8 @@ class ilMail
 					}
 
 					$toEmailAddresses = implode(',', $emails);
-					$this->sendMimeMail($toEmailAddresses, '', '', $a_subject, $this->formatLinebreakMessage($id_to_message_map[$id]), $a_attachments);
+//					$this->sendMimeMail($toEmailAddresses, '', '', $a_subject, $this->formatLinebreakMessage($id_to_message_map[$id]), $a_attachments); //mg1023
+					$this->sendMimeMail($toEmailAddresses, '', '', $a_subject, $id_to_message_map[$id], $a_attachments);
 				}
 			}
 
@@ -992,7 +994,8 @@ class ilMail
 
 			if(count($as_email))
 			{
-				$this->sendMimeMail('', '', implode(',', $as_email), $a_subject, $this->formatLinebreakMessage($cc_and_bcc_message), $a_attachments);
+//				$this->sendMimeMail('', '', implode(',', $as_email), $a_subject, $this->formatLinebreakMessage($cc_and_bcc_message), $a_attachments); //mg1023
+				$this->sendMimeMail('', '', implode(',', $as_email), $a_subject, $cc_and_bcc_message, $a_attachments);
 			}
 		}
 
@@ -1246,7 +1249,8 @@ class ilMail
 				$externalMailRecipientsCc,
 				$externalMailRecipientsBcc,
 				$a_m_subject,
-				$this->formatLinebreakMessage($a_use_placeholders ? $this->replacePlaceholders($a_m_message, 0, false) : $a_m_message),
+//				$this->formatLinebreakMessage($a_use_placeholders ? $this->replacePlaceholders($a_m_message, 0, false) : $a_m_message), //mg1023 placeholders checken
+				$a_use_placeholders ? $this->replacePlaceholders($a_m_message, 0, false) : $a_m_message,
 				$a_attachment,
 				0
 			);
