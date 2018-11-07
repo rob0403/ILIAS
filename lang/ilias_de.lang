@@ -3170,8 +3170,6 @@ common#:#ldap_tls#:#Benutze TLS
 common#:#ldap_version#:#Protokollversion
 common#:#learning module#:#Lernmodul
 common#:#learning_progress#:#Lernfortschritt
-common#:#learning_resource#:#Lernmaterial
-common#:#learning_resources#:#Lernmaterialien
 common#:#leave_waiting_list#:#Von der Warteliste abmelden
 common#:#legend#:#Legende
 common#:#level#:#Stufe
@@ -3553,7 +3551,7 @@ common#:#obj_lm_duplicate#:#Lernmodul kopieren
 common#:#obj_lng#:#Sprache
 common#:#obj_lngf#:#Sprachen
 common#:#obj_lngf_desc#:#Systemsprachen können hier verwaltet werden.
-common#:#obj_lrss#:#Lernressourcen
+common#:#obj_lrss#:#Lernmodule
 common#:#obj_lrss_desc#:#Lernmodule usw. konfigurieren.
 common#:#obj_mail#:#Mail
 common#:#obj_mail_desc#:#Globale Mailkonfiguration
@@ -14790,8 +14788,6 @@ lso#:#lso_members_gallery#:#Mitgliedergalerie
 lso#:#lso_search_users#:#Benutzer suchen
 lso#:#lso_print_list#:#Liste erstellen
 lso#:#lso_mem_tbl_header#:#Lernsequenz Teilnehmer
-lso#:#il_lso_member#:#Teilnehmer
-lso#:#il_lso_admin#:#Administrator
 lso#:#lso_users_already_assigned#:#Ein Benutzer ist bereits Mitglied dieser Lernsequenz
 lso#:#lso_msg_member_assigned#:#Benutzer wurde(n) in die Lernsequenz aufgenommen
 lso#:#lso_notification#:#Benachrichtigung
@@ -14881,3 +14877,11 @@ dateplaner#:#back_to_crs#:#Kursinhalt
 dateplaner#:#back_to_grp#:#Gruppeninhalt
 dateplaner#:#back_to_pd#:#Zum Persönlichen Schreibtisch
 crs#:#crs_timings_short_start_end#:#Startdatum
+common#:#il_lso_admin#:#Lernsequenzadministrator
+common#:#il_lso_member#:#Lernsequenzmitglied
+lso#:#entries_updated#:#Einträge gespeichert
+lso#:#curriculum#:#Curriculum
+lso#:#unparticipate#:#Abmelden
+lso#:#participate#:#Anmelden
+lhist#:#lhist_show_more#:#Show More
+meta#:#meta_info_only_repository_objects#:#Only repository objects are listed below (and no media objects or LM pages).

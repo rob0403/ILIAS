@@ -24135,7 +24135,7 @@ $fields = array(
 	),
 	'parent_identification' => array(
 		'type' => 'text',
-		'length' => '256',
+		'length' => '255',
 
 	)
 );
@@ -24150,12 +24150,12 @@ if (! $ilDB->tableExists('il_mm_items')) {
 $fields = array(
 	'id' => array(
 		'type' => 'text',
-		'length' => '256',
+		'length' => '255',
 
 	),
 	'identification' => array(
 		'type' => 'text',
-		'length' => '256',
+		'length' => '255',
 	),
 	'translation' => array(
 		'type' => 'text',
@@ -24179,12 +24179,12 @@ if (! $ilDB->tableExists('il_mm_translation')) {
 $fields = array(
 	'provider_class' => array(
 		'type'   => 'text',
-		'length' => '256',
+		'length' => '255',
 
 	),
 	'purpose'        => array(
 		'type'   => 'text',
-		'length' => '256',
+		'length' => '255',
 
 	),
 	'dynamic'        => array(
@@ -24209,7 +24209,7 @@ $fields = array(
 	),
 	'provider_class' => array(
 		'type'   => 'text',
-		'length' => '256',
+		'length' => '255',
 
 	),
 	'active'         => array(
@@ -24229,7 +24229,7 @@ if (!$ilDB->tableExists('il_gs_identifications')) {
 $fields = array(
 	'identifier' => array(
 		'type' => 'text',
-		'length' => '256',
+		'length' => '255',
 
 	),
 	'type' => array(
@@ -24265,7 +24265,7 @@ if (! $ilDB->tableExists('il_mm_custom_items')) {
 $fields = array(
 	'identification' => array(
 		'type' => 'text',
-		'length' => '256',
+		'length' => '255',
 
 	),
 	'action' => array(
@@ -25065,4 +25065,104 @@ include_once('./Services/Migration/DBUpdate_3560/classes/class.ilDBUpdateNewObje
 $src_ops_id = ilDBUpdateNewObjectType::getCustomRBACOperationId('write');
 $tgt_ops_id = ilDBUpdateNewObjectType::getCustomRBACOperationId('read_results');
 ilDBUpdateNewObjectType::cloneOperation('svy', $src_ops_id, $tgt_ops_id);
+?>
+<#5422>
+<?php
+	$ilCtrlStructureReader->getStructure();
+?>
+<#5423>
+<?php
+// Possibly missing primaries
+$ilDB->modifyTableColumn('il_mm_translation', 'identification', array(
+	'length'  => 255
+));
+
+$ilDB->modifyTableColumn('il_gs_providers', 'provider_class', array(
+	'length'  => 255
+));
+
+$ilDB->modifyTableColumn('il_gs_providers', 'purpose', array(
+	'length'  => 255
+));
+
+$ilDB->modifyTableColumn('il_gs_identifications', 'provider_class', array(
+	'length'  => 255
+));
+
+$ilDB->modifyTableColumn('il_mm_custom_items', 'identifier', array(
+	'length'  => 255
+));
+
+$ilDB->modifyTableColumn('il_mm_actions', 'identification', array(
+	'length'  => 255
+));
+
+
+$manager = $ilDB->loadModule('Manager');
+
+$const = $manager->listTableConstraints("il_mm_translation");
+if(!in_array("primary", $const)) {
+	$ilDB->addPrimaryKey('il_mm_translation', array( 'id' ));
+}
+$const = $manager->listTableConstraints("il_gs_providers");
+if(!in_array("primary", $const)) {
+	$ilDB->addPrimaryKey('il_gs_providers', array('provider_class'));
+}
+$const = $manager->listTableConstraints("il_gs_identifications");
+if(!in_array("primary", $const)) {
+	$ilDB->addPrimaryKey('il_gs_identifications', array('identification'));
+}
+$const = $manager->listTableConstraints("il_mm_custom_items");
+if(!in_array("primary", $const)) {
+	$ilDB->addPrimaryKey('il_mm_custom_items', array( 'identifier' ));
+}
+$const = $manager->listTableConstraints("il_mm_actions");
+if(!in_array("primary", $const)) {
+	$ilDB->addPrimaryKey('il_mm_actions', array( 'identification' ));
+}	
+	
+?>
+<#5424>
+<?php
+if (!$ilDB->tableExists('booking_member'))
+{
+	$ilDB->createTable('booking_member', array(
+		'participant_id' => array(
+			'type' => 'integer',
+			'length' => 4,
+			'notnull' => true,
+			'default' => 0
+		),
+		'user_id' => array(
+			'type' => 'integer',
+			'length' => 4,
+			'notnull' => true,
+			'default' => 0
+		),
+		'booking_pool_id' => array(
+			'type' => 'text',
+			'length' => 255,
+			'notnull' => true
+		),
+		'assigner_user_id' => array(
+			'type' => 'integer',
+			'length' => 4,
+			'notnull' => true,
+			'default' => 0
+		)
+	));
+	$ilDB->addPrimaryKey('booking_member', array('participant_id', 'user_id', 'booking_pool_id'));
+	$ilDB->createSequence('booking_member');
+}
+?>
+<#5425>
+<?php
+if(!$ilDB->tableColumnExists('booking_reservation','assigner_id'))
+{
+	$ilDB->addTableColumn("booking_reservation", "assigner_id", array("type" => "integer", "length" => 4, "notnull" => true, "default" => 0));
+}
+?>
+<#5426>
+<?php
+$ilCtrlStructureReader->getStructure();
 ?>
