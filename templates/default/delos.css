@@ -11745,6 +11745,13 @@ img.il_ExplorerIcon {
   height: 20px;
   width: 20px;
 }
+.ilExplorerContainer .jstree-default .jstree-anchor {
+  height: auto;
+}
+.jstree-default .jstree-node,
+.jstree-default .jstree-anchor {
+  line-height: inherit;
+}
 /* Modules/Forum */
 a.postread,
 a.postread:visited {
@@ -16096,6 +16103,10 @@ body.ilPrtfPdfBody .ilPCMyCoursesToggle img {
   text-overflow: ellipsis;
   overflow-x: hidden;
   color: #606060;
+}
+.ilOnScreenChatMenuItem .media-body p.lastMessage img {
+  max-width: 15px;
+  max-height: 15px;
 }
 .ilOnScreenChatMenuItem .media-body p a {
   color: #557196 !important;
