@@ -6094,6 +6094,7 @@ form#:#form_msg_file_partially_uploaded#:#Die Datei konnte nicht vollständig ho
 form#:#form_msg_file_size_exceeds#:#Die hochzuladende Datei überschreitet die maximale Dateigröße.
 form#:#form_msg_file_upload_stopped_ext#:#Upload durch PHP-Extension abgebrochen.
 form#:#form_msg_file_virus_found#:#In der hochzuladenden Datei wurde ein Virus gefunden!
+form#:#form_msg_file_missing_file_ext#:#Die hochgeladene Datei hat keine Dateiendung.
 form#:#form_msg_file_wrong_file_type#:#Falscher Dateityp
 form#:#form_msg_formula_is_required#:#Bitte geben Sie eine korrekte Formel an.
 form#:#form_msg_numeric_value_required#:#Bitte geben Sie einen numerischen Wert ein.
@@ -9830,6 +9831,7 @@ pd#:#block_show_pdnews#:#Neuigkeiten anzeigen
 pd#:#block_show_pdnotes#:#Notizen anzeigen
 pd#:#block_show_pdbookm#:#Bookmarks anzeigen
 pd#:#block_show_chatviewer#:#Chatviewer anzeigen
+pd#:#block_show_pdfrmpostdraft#:#Beitragsentwürfe anzeigen
 pd#:#block_create_pdfeed#:#Neuen Webfeed erstellen
 pd#:#block_show_x#:#%s anzeigen
 common#:#crs_list_reg_start#:#Anmeldungsbeginn
@@ -14238,3 +14240,7 @@ file#:#file_suffix_overall_white_info#:#Dies ist die endgültige Liste akzeptier
 file#:#file_upload_info_file_with_critical_unknown_extension_later_renamed_when_downloading#:#Die hochgeladene Datei enthält eine kritische oder unbekannte Dateiendung. Die Dateiendung wird bei jedem Download zu .sec geändert.
 wiki#:#wiki_change_notification_body_new#:#die folgende Wiki-Seite wurde neu angelegt
 mob#:#mob_no_fixed_size_map_editing#:#Bitte bestimmen Sie eine feste Größe für ihr Bild, bevor Sie verlinkte Bereiche definieren. Die Bereiche werden nicht angepasst, wenn ihr Bild durch einen Content-Style oder andere CSS-Regeln skaliert wird.
+survey#:#svy_answer_too_long#:#Ihre Antwort ist zu lang (%s Zeichen). Bitte kürzen Sie ihre Antwort.
+survey#:#svy_appraisses_cannot_be_raters#:#Benutzer können sich nicht selbst als Feedback-Geber zugeordnet werden. Nutzen Sie stattdessen die Option "Selbsteinschätzung" in den Einstellungen der Umfrage.
+sess#:#sess_material_assigned#:#Zugeordnet
+sess#:#sess_material_not_assigned#:#Nicht zugeordnet
