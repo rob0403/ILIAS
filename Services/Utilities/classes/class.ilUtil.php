@@ -2614,6 +2614,17 @@ class ilUtil
 
 		return $a_arr;
 	}
+
+	/**
+	 * @param string $clientId
+	 * @return \ILIAS\Data\ClientId
+	 */
+	public static function getClientIdByString(string $clientId): \ILIAS\Data\ClientId 
+	{
+		$df = new \ILIAS\Data\Factory;
+
+		return $df->clientId($clientId);
+	}
 	
 	/**
 	* Strip slashes from array and sub-arrays

@@ -7846,7 +7846,9 @@ hr.il-divider-with-label {
   background-image: url("images/icon_iass.svg");
 }
 .il-viewcontrol-mode .ilSubmitInactive,
-.il-viewcontrol-mode .ilSubmitInactive:hover {
+.il-viewcontrol-section .ilSubmitInactive,
+.il-viewcontrol-mode .ilSubmitInactive:hover,
+.il-viewcontrol-section .ilSubmitInactive:hover {
   background-color: #557196;
   color: white;
   border-color: transparent;
@@ -14491,6 +14493,12 @@ body.ilPrtfPdfBody .ilPCMyCoursesToggle img {
 [data-onscreenchat-inact-userid] {
   opacity: .3 !important;
 }
+.ilOnScreenChatWindowHeaderTooltip ul {
+  text-align: left;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
 #onscreenchat-container {
   position: fixed;
   bottom: 0;
@@ -14794,6 +14802,10 @@ body.ilPrtfPdfBody .ilPCMyCoursesToggle img {
   overflow-x: hidden;
   color: #606060;
 }
+.ilOnScreenChatMenuItem .media-body p.lastMessage img {
+  max-width: 15px;
+  max-height: 15px;
+}
 .ilOnScreenChatMenuItem .media-body p a {
   color: #557196 !important;
 }
@@ -14829,6 +14841,11 @@ div.ilBadgeBackpackPanelContent img {
 span.ilProfileBadge {
   display: inline-block;
   padding: 5px;
+}
+span.ilProfileBadge a {
+  width: 50px;
+  height: 50px;
+  display: inline-block;
 }
 /*!
  * Datetimepicker for Bootstrap 3
