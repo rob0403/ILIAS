@@ -54,6 +54,17 @@ class ilAssClozeTestFeedback extends ilAssMultiOptionQuestionFeedback
 	}
 	
 	/**
+	 * returns the answer options mapped by answer index
+	 * (overwrites parent method from ilAssMultiOptionQuestionFeedback)
+	 *
+	 * @return array $answerOptionsByAnswerIndex
+	 */
+	public function getAnswerOptionsByAnswerIndex()
+	{
+		return $this->getGapsByIndex();
+	}
+	
+	/**
 	 * @return boolean $isSaveableInPageObjectEditingMode
 	 */
 	public function isSaveableInPageObjectEditingMode()
