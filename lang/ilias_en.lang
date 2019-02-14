@@ -3320,6 +3320,7 @@ rbac#:#sahs_write#:#User can edit content and settings of SCORM learning module
 common#:#sahs#:#Learning Module SCORM
 common#:#salutation_f#:#Ms./Mrs.
 common#:#salutation_m#:#Mr.
+common#:#salutation_n#:#Not Applicable
 common#:#salutation#:#Salutation
 common#:#save_and_back#:#Save And Back
 common#:#save_message#:#Save as Draft
@@ -5210,6 +5211,7 @@ forum#:#frm_default_view#:#Default View
 forum#:#frm_detach_moderator_role#:#Detach Moderator Role
 forum#:#frm_moderator_f#:#Moderator
 forum#:#frm_moderator_m#:#Moderator
+forum#:#frm_moderator_n#:#Moderation
 forum#:#frm_moderator_role_added_successfully#:#The user was added as moderator successfully.
 forum#:#frm_moderators_detached_role_successfully#:#The moderator role was detached for all selected users successfully.
 forum#:#frm_moderators_not_exist_yet#:#Please choose a moderator.

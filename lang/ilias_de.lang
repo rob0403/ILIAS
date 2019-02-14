@@ -3831,6 +3831,7 @@ rbac#:#sahs_write#:#Inhalt und Einstellungen des SCORM-Lernmoduls bearbeiten
 common#:#salutation#:#Anrede
 common#:#salutation_f#:#Frau
 common#:#salutation_m#:#Herr
+common#:#salutation_n#:#Keine Angabe
 common#:#save#:#Speichern
 common#:#save_and_back#:#Speichern und zurück
 common#:#save_message#:#Als Entwurf speichern
@@ -6163,6 +6164,7 @@ forum#:#frm_detach_moderator_role#:#Moderatorenrolle entziehen
 forum#:#frm_edit_title#:#Titel bearbeiten
 forum#:#frm_moderator_f#:#Moderatorin
 forum#:#frm_moderator_m#:#Moderator
+forum#:#frm_moderator_n#:#Moderation
 forum#:#frm_moderator_role_added_successfully#:#Der Benutzer wurde als Moderator hinzugefügt.
 forum#:#frm_moderators#:#Moderatoren
 forum#:#frm_moderators_detached_role_successfully#:#Für die ausgewählten Benutzer wurde die Moderatorenrolle erfolgreich entfernt.
@@ -9653,7 +9655,7 @@ dcl#:#dcl_text_selection#:#Auswahlmenü Text
 dcl#:#dcl_reference#:#Referenz
 dcl#:#dcl_boolean#:#Checkbox
 dcl#:#dcl_datetime#:#Datumseingabe
-dcl#:#dcl_date_selection#:#Auwahlmenü Datum
+dcl#:#dcl_date_selection#:#Auswahlmenü Datum
 dcl#:#dcl_fileupload#:#Datei-Upload
 dcl#:#dcl_field_description#:#Beschreibung
 dcl#:#dcl_field_required#:#Verpflichtend
@@ -14176,7 +14178,7 @@ common#:#position_permission_settings#:#Rechte nach Positionen
 common#:#org_permission_settings#:#Rechte der Positionen in Organisationseinheiten
 common#:#org_op_read_learning_progress#:#Lernfortschritt untergeordneter Benutzer einsehen
 common#:#org_op_manage_members#:#Untergeordnete Mitglieder verwalten
-common#:#org_op_access_enrolments#:#Teilnehmer-Status einsehen
+common#:#org_op_access_enrolments#:#Einschreibe-Status einsehen
 sahs#:#sahs_add#:#SCORM-Lernmodul anlegen
 sahs#:#sahs_copy#:#SCORM-Lernmodul kopieren
 sahs#:#sahs_glo_info#:#Bitte beachten Sie, daß interne Links in Glossarbegriffen nicht unterstützt werden.
