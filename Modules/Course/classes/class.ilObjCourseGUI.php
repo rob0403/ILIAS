@@ -16,7 +16,7 @@ require_once "./Services/Container/classes/class.ilContainerGUI.php";
  * @ilCtrl_Calls ilObjCourseGUI: ilCourseContentGUI, ilPublicUserProfileGUI, ilMemberExportGUI
  * @ilCtrl_Calls ilObjCourseGUI: ilObjectCustomUserFieldsGUI, ilMemberAgreementGUI, ilSessionOverviewGUI
  * @ilCtrl_Calls ilObjCourseGUI: ilColumnGUI, ilContainerPageGUI
- * @ilCtrl_Calls ilObjCourseGUI: ilLicenseOverviewGUI, ilObjectCopyGUI, ilObjStyleSheetGUI
+ * @ilCtrl_Calls ilObjCourseGUI: ilObjectCopyGUI, ilObjStyleSheetGUI
  * @ilCtrl_Calls ilObjCourseGUI: ilCourseParticipantsGroupsGUI, ilExportGUI, ilCommonActionDispatcherGUI
  * @ilCtrl_Calls ilObjCourseGUI: ilDidacticTemplateGUI, ilCertificateGUI, ilObjectServiceSettingsGUI
  * @ilCtrl_Calls ilObjCourseGUI: ilContainerStartObjectsGUI, ilContainerStartObjectsPageGUI
@@ -827,7 +827,7 @@ class ilObjCourseGUI extends ilContainerGUI
 			return $this->editObject($form);
 		}
 		
-		// Additional checks
+		// Additional checks: subsription min/max
 		if(
 			$form->getInput('subscription_max') &&
 			$form->getInput('subscription_min') &&
@@ -837,6 +837,23 @@ class ilObjCourseGUI extends ilContainerGUI
 			$min = $form->getItemByPostVar('subscription_min');
 			$min->setAlert($this->lng->txt('crs_subscription_min_members_err'));
 			ilUtil::sendFailure($GLOBALS['DIC']->language()->txt('err_check_input'));
+			return $this->editObject($form);
+		}
+
+		// Additional checks: both tile and objective view activated (not supported)
+		if(
+			$form->getInput('list_presentation') == "tile" &&
+			$form->getInput('view_mode') == IL_CRS_VIEW_OBJECTIVE)
+		{
+			ilUtil::sendFailure($GLOBALS['DIC']->language()->txt('crs_tile_and_objective_view_not_supported'));
+			return $this->editObject($form);
+		}
+
+		// Additional checks: both tile and session limitation activated (not supported)
+		if ($form->getInput('sl') == "1" &&
+			$form->getInput('list_presentation') == "tile")
+		{
+			ilUtil::sendFailure($GLOBALS['DIC']->language()->txt('crs_tile_and_session_limit_not_supported'));
 			return $this->editObject($form);
 		}
 
@@ -949,10 +966,6 @@ class ilObjCourseGUI extends ilContainerGUI
 		if($this->object->getViewMode() == IL_CRS_VIEW_TIMING)
 		{
 			$this->object->setOrderType(ilContainer::SORT_ACTIVATION);
-			if($form->getInput('timing_mode') != $this->object->getTimingMode())
-			{
-				ilUtil::sendInfo($this->lng->txt("crs_view_info_timing_mode"), true);
-			}
 			$this->object->setTimingMode((int) $form->getInput('timing_mode'));
 		}
 		$this->object->setTimingMode($form->getInput('timing_mode'));
@@ -2169,16 +2182,6 @@ class ilObjCourseGUI extends ilContainerGUI
 								 '',
 								 array('illplistofobjectsgui','illplistofsettingsgui','illearningprogressgui','illplistofprogressgui'));
 		}
-		
-		// license overview
-		include_once("Services/License/classes/class.ilLicenseAccess.php");
-		if ($ilAccess->checkAccess('edit_permission', '', $this->ref_id)
-		and ilLicenseAccess::_isEnabled())
-		{
-			$this->tabs_gui->addTarget("licenses",
-				$this->ctrl->getLinkTargetByClass('illicenseoverviewgui', ''),
-			"", "illicenseoverviewgui");
-		}
 
 		// meta data
 		if ($ilAccess->checkAccess('write','',$this->ref_id))
@@ -2278,7 +2281,6 @@ class ilObjCourseGUI extends ilContainerGUI
 		}
 
 		$header_action = true;
-
 		switch($next_class)
 		{
 			case 'illtiproviderobjectsettinggui':
@@ -2352,6 +2354,13 @@ class ilObjCourseGUI extends ilContainerGUI
 				$this->ctrl->forwardCommand($crs_grp_gui);
 				break;
 
+
+			case "ilpropertyformgui":
+				// only case is currently adv metadata internal link in info settings, see #24497
+				$form = $this->initInfoEditor();
+				$this->ctrl->forwardCommand($form);
+				break;
+
 			case "ilcolumngui":
 				$this->tabs_gui->setTabActive('none');
 				$this->checkPermission("read");
@@ -2381,14 +2390,6 @@ class ilObjCourseGUI extends ilContainerGUI
 													  $_GET['user_id'] ? $_GET['user_id'] : $ilUser->getId());
 				$this->ctrl->forwardCommand($new_gui);
 				$this->tabs_gui->setTabActive('learning_progress');
-				break;
-
-
-			case 'illicenseoverviewgui':
-				include_once("./Services/License/classes/class.ilLicenseOverviewGUI.php");
-				$license_gui = new ilLicenseOverviewGUI($this, ilLicenseOverviewGUI::LIC_MODE_REPOSITORY);
-				$ret =& $this->ctrl->forwardCommand($license_gui);
-				$this->tabs_gui->setTabActive('licenses');
 				break;
 
 			case 'ilpermissiongui':
@@ -2596,12 +2597,13 @@ class ilObjCourseGUI extends ilContainerGUI
 				break;
 
 			case "ilcontainernewssettingsgui":
-
 				$this->setSubTabs("properties");
 				$this->tabs_gui->activateTab('settings');
 				$this->tabs_gui->activateSubTab('obj_news_settings');
-				include_once("./Services/Container/classes/class.ilContainerNewsSettingsGUI.php");
 				$news_set_gui = new ilContainerNewsSettingsGUI($this);
+				$news_set_gui->setTimeline(true);
+				$news_set_gui->setCronNotifications(true);
+				$news_set_gui->setHideByDate(true);
 				$this->ctrl->forwardCommand($news_set_gui);
 				break;
 
@@ -2792,43 +2794,7 @@ class ilObjCourseGUI extends ilContainerGUI
 		}
 		return true;
 	}
-	
-	
-	/**
-	 * Check the remaining licenses of course objects and generate a message if raare
-	 *
-	 * @access private
-	 *
-	 */
-	private function checkLicenses($a_keep = false)
-	{
-		global $DIC;
 
-		$lng = $DIC['lng'];
-
-
-		include_once("Services/License/classes/class.ilLicenseAccess.php");
-		if (ilLicenseAccess::_isEnabled())
-		{
-			$lic_set = new ilSetting("license");
-			$buffer = $lic_set->get("license_warning");
-
-			include_once("./Services/License/classes/class.ilLicense.php");
-			$licensed_items = ilLicense::_getLicensedChildObjects($this->object->getRefId());
-			foreach ($licensed_items as $item)
-			{
-				$license = new ilLicense($item['obj_id']);
-				$remaining = $license->getRemainingLicenses();
-				if ($remaining <= $buffer)
-				{
-					$lng->loadlanguageModule("license");
-					ilUtil::sendInfo(sprintf($this->lng->txt("course_licenses_rare"), $remaining), $a_keep);
-					break;
-				}
-			}
-		}
-	}
-	
 	// STATIC
 	public static function _forwards()
 	{

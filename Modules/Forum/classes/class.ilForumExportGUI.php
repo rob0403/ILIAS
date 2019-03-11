@@ -193,11 +193,11 @@ class ilForumExportGUI
 				$tpl->setVariable('T_TITLE', $topic->getSubject());
 				if($this->is_moderator)
 				{
-					$tpl->setVariable('T_NUM_POSTS', $topic->countPosts());
+					$tpl->setVariable('T_NUM_POSTS', $topic->countPosts(true));
 				}
 				else
 				{
-					$tpl->setVariable('T_NUM_POSTS', $topic->countActivePosts());
+					$tpl->setVariable('T_NUM_POSTS', $topic->countActivePosts(true));
 				}
 				$tpl->setVariable('T_NUM_VISITS', $topic->getVisits());
 				$tpl->setVariable('T_FORUM', $thread_data['top_name']);
@@ -224,12 +224,12 @@ class ilForumExportGUI
 	}
 
 	/**
-	 * @param ilTemplate $tpl
+	 * @param \ilGlobalTemplate $tpl
 	 * @param ilForumPost $post
 	 * @param int $counter
 	 * @param int $mode
 	 */
-	protected function renderPostHtml(ilTemplate $tpl, ilForumPost $post, $counter, $mode)
+	protected function renderPostHtml(\ilGlobalTemplate $tpl, ilForumPost $post, $counter, $mode)
 	{
 		$tpl->setCurrentBlock('posts_row');
 

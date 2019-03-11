@@ -705,6 +705,17 @@ class ilObjTest extends ilObject implements ilMarkSchemaAware, ilEctsGradesEnabl
 		
 		parent::__construct($a_id, $a_call_by_reference);
 	}
+	
+	/**
+	 * returns the object title prepared to be used as a filename
+	 *
+	 * @return string
+	 */
+	public function getTitleFilenameCompliant()
+	{
+		require_once 'Services/Utilities/classes/class.ilUtil.php';
+		return ilUtil::getASCIIFilename($this->getTitle());
+	}
 
 	/**
 	 * @return int
@@ -3436,8 +3447,13 @@ function getAnswerFeedbackPoints()
 		}
 		return false;
 	}
-
-	public function removeQuestionFromSequences($questionId, $activeIds)
+	
+	/**
+	 * @param int $questionId
+	 * @param array $activeIds
+	 * @param ilTestReindexedSequencePositionMap $reindexedSequencePositionMap
+	 */
+	public function removeQuestionFromSequences($questionId, $activeIds, ilTestReindexedSequencePositionMap $reindexedSequencePositionMap)
 	{
 		global $DIC; /* @var ILIAS\DI\Container $DIC */
 		
@@ -3455,7 +3471,7 @@ function getAnswerFeedbackPoints()
 				$testSequence = $testSequenceFactory->getSequenceByActiveIdAndPass($activeId, $pass);
 				$testSequence->loadFromDb();
 				
-				$testSequence->removeQuestion($questionId);
+				$testSequence->removeQuestion($questionId, $reindexedSequencePositionMap);
 				$testSequence->saveToDb();
 			}
 		}
@@ -4385,6 +4401,7 @@ function getAnswerFeedbackPoints()
 		$found["test"]["total_requested_hints"] = $results['hint_count'];
 		$found["test"]["total_hint_points"] = $results['hint_points'];
 		$found["test"]["result_pass"] = $results['pass'];
+		$found['test']['result_tstamp'] = $results['tstamp'];
 		$found['test']['obligations_answered'] = $results['obligations_answered'];
 		
 		if( (!$total_reached_points) or (!$total_max_points) )
@@ -10951,9 +10968,13 @@ function getAnswerFeedbackPoints()
 		$owner_id = $this->getOwner();
 		$usr_data = $this->userLookupFullName(ilObjTest::_getUserIdFromActiveId($active_id));
 
+		$participantList = new ilTestParticipantList($this);
+		$participantList->initializeFromDbRows($this->getTestParticipants());
+		
 		require_once 'Modules/Test/classes/class.ilTestExportFactory.php';
 		$expFactory = new ilTestExportFactory($this);
 		$exportObj = $expFactory->getExporter('results');
+		$exportObj->setForcedAccessFilteredParticipantList($participantList);
 		$file = $exportObj->exportToExcel($deliver = FALSE, 'active_id', $active_id, $passedonly = FALSE);
 		include_once "./Services/Mail/classes/class.ilFileDataMail.php";
 		$fd = new ilFileDataMail(ANONYMOUS_USER_ID);
@@ -11280,6 +11301,9 @@ function getAnswerFeedbackPoints()
 	    $this->poolUsage = (boolean)$usage;
 	}
 	
+	/**
+	 * @return ilTestReindexedSequencePositionMap
+	 */
 	public function reindexFixedQuestionOrdering()
 	{
 		global $DIC;
@@ -11292,9 +11316,11 @@ function getAnswerFeedbackPoints()
 		$questionSetConfig = $qscFactory->getQuestionSetConfig();
 		
 		/* @var ilTestFixedQuestionSetConfig $questionSetConfig */
-		$questionSetConfig->reindexQuestionOrdering();
+		$reindexedSequencePositionMap = $questionSetConfig->reindexQuestionOrdering();
 		
 		$this->loadQuestions();
+		
+		return $reindexedSequencePositionMap;
 	}
 
 	public function setQuestionOrderAndObligations($orders, $obligations)

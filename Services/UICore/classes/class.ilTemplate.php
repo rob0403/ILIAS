@@ -72,6 +72,7 @@ class ilTemplate extends HTML_Template_ITX
 	protected $page_actions = array();
 	protected $permanent_link = false;
 	protected $content_style_sheet = "";
+	protected $main_content = "";
 	
 	protected $title_alerts = array();
 	protected $header_action;
@@ -1213,8 +1214,7 @@ class ilTemplate extends HTML_Template_ITX
 		$count = 0;
 		reset($this->vars);
 
-		while(list($key, $val) = each($this->vars))
-		{
+		foreach ($this->vars as $key => $val) {
 			if (is_array($this->blockvariables[$this->activeBlock]))
 			{
 				if  (array_key_exists($key, $this->blockvariables[$this->activeBlock]))

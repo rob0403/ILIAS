@@ -546,7 +546,7 @@ class ilContainerGUI extends ilObjectGUI implements ilDesktopItemHandling
 
 			// all items in one block
 			case ilContainer::VIEW_SESSIONS:
-			case IL_CRS_VIEW_TIMING:			// not nice this workaround
+			case ilCourseConstants::IL_CRS_VIEW_TIMING: // not nice this workaround
 				include_once("./Services/Container/classes/class.ilContainerSessionsContentGUI.php");
 				$container_view = new ilContainerSessionsContentGUI($this);
 				break;
@@ -795,6 +795,9 @@ class ilContainerGUI extends ilObjectGUI implements ilDesktopItemHandling
 					}
 				}
 			}
+			// bugfix mantis 24559
+			// undoing an erroneous change inside mantis 23516 by adding "Download Multiple Objects"-functionality for non-admins
+			// as they don't have the possibility to use the multi-download-capability of the manage-tab
 			else if ($this->isMultiDownloadEnabled())
 			{
 				// bugfix mantis 0021272
@@ -804,8 +807,9 @@ class ilContainerGUI extends ilObjectGUI implements ilDesktopItemHandling
 				if(count($num_files) > 0 OR count($num_folders) > 0)
 				{
 					// #11843
-					$main_tpl->setPageFormAction($this->ctrl->getFormAction($this));
+					$GLOBALS['tpl']->setPageFormAction($this->ctrl->getFormAction($this));
 
+					include_once './Services/UIComponent/Toolbar/classes/class.ilToolbarGUI.php';
 					$toolbar = new ilToolbarGUI();
 					$this->ctrl->setParameter($this, "type", "");
 					$this->ctrl->setParameter($this, "item_ref_id", "");
@@ -815,7 +819,7 @@ class ilContainerGUI extends ilObjectGUI implements ilDesktopItemHandling
 						'download'
 					);
 
-					$main_tpl->addAdminPanelToolbar(
+					$GLOBALS['tpl']->addAdminPanelToolbar(
 						$toolbar,
 						$this->object->gotItems() ? true : false,
 						$this->object->gotItems() ? true : false
@@ -825,7 +829,7 @@ class ilContainerGUI extends ilObjectGUI implements ilDesktopItemHandling
 				{
 					ilUtil::sendInfo($this->lng->txt('msg_no_downloadable_objects'), true);
 				}
-			}		
+			}
 		}
 	}
 
@@ -1481,13 +1485,16 @@ class ilContainerGUI extends ilObjectGUI implements ilDesktopItemHandling
 	 	ilUtil::sendSuccess($lng->txt("removed_from_desktop"));
 		$this->renderObject();
     }
-	
+
+	// bugfix mantis 24559
+	// undoing an erroneous change inside mantis 23516 by adding "Download Multiple Objects"-functionality for non-admins
+	// as they don't have the possibility to use the multi-download-capability of the manage-tab
 	function enableMultiDownloadObject()
 	{
 		$this->multi_download_enabled = true;
 		$this->renderObject();
 	}
-	
+
 	function isMultiDownloadEnabled()
 	{
 		return $this->multi_download_enabled;
@@ -3541,16 +3548,22 @@ class ilContainerGUI extends ilObjectGUI implements ilDesktopItemHandling
 	public function initFormTitleDescription(ilPropertyFormGUI $form)
 	{
 		/** @var ilObjectTranslation $trans */
-		$trans = $this->object->getObjectTranslation();
+		if (is_object($this->object))	// note: this form can also be used for new groups (create group via awareness tool)
+		{
+			$trans = $this->object->getObjectTranslation();
+		}
 
 		$title = new ilTextInputGUI($this->lng->txt("title"), "title");
 		$title->setRequired(true);
 		$title->setSize(min(40, ilObject::TITLE_LENGTH));
 		$title->setMaxLength(ilObject::TITLE_LENGTH);
-		$title->setValue($trans->getDefaultTitle());
+		if(is_object($trans))
+		{
+			$title->setValue($trans->getDefaultTitle());
+		}
 		$form->addItem($title);
 
-		if(sizeof($trans->getLanguages()) > 1)
+		if(is_object($trans) && sizeof($trans->getLanguages()) > 1)
 		{
 			include_once('Services/MetaData/classes/class.ilMDLanguageItem.php');
 			$languages = ilMDLanguageItem::_getLanguages();
@@ -3564,7 +3577,10 @@ class ilContainerGUI extends ilObjectGUI implements ilDesktopItemHandling
 		$desc = new ilTextAreaInputGUI($this->lng->txt("description"), "desc");
 		$desc->setRows(2);
 		$desc->setCols(40);
-		$desc->setValue($trans->getDefaultDescription());
+		if(is_object($trans))
+		{
+			$desc->setValue($trans->getDefaultDescription());
+		}
 		$form->addItem($desc);
 	}
 

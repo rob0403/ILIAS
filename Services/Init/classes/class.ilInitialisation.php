@@ -530,11 +530,10 @@ class ilInitialisation
 	 */
 	public static function setSessionHandler()
 	{
-		if(ini_get('session.save_handler') != 'user')
-		{
+		if (ini_get('session.save_handler') != 'user' && version_compare(PHP_VERSION, '7.2.0', '<')) {
 			ini_set("session.save_handler", "user");
 		}
-		
+
 		require_once "Services/Authentication/classes/class.ilSessionDBHandler.php";
 		$db_session_handler = new ilSessionDBHandler();
 		if (!$db_session_handler->setSaveHandler())
@@ -614,13 +613,13 @@ class ilInitialisation
 	 */
 	protected static function initMail(\ILIAS\DI\Container $c)
 	{
-		$c["mail.mime.transport.factory"] = function ($c) {
-			return new \ilMailMimeTransportFactory($c["ilSetting"]);
+		$c["mail.mime.transport.factory"] = function (\ILIAS\DI\Container $c) {
+			return new \ilMailMimeTransportFactory($c->settings(), $c->event());
 		};
-		$c["mail.mime.sender.factory"] = function ($c) {
-			return new \ilMailMimeSenderFactory($c["ilSetting"]);
+		$c["mail.mime.sender.factory"] = function (\ILIAS\DI\Container $c) {
+			return new \ilMailMimeSenderFactory($c->settings());
 		};
-		$c["mail.texttemplates.service"] = function ($c) {
+		$c["mail.texttemplates.service"] = function (\ILIAS\DI\Container $c) {
 			return new \ilMailTemplateService(new \ilMailTemplateRepository($c->database()));
 		};
 	}
@@ -1216,9 +1215,8 @@ class ilInitialisation
 				"./Services/Component/classes/class.ilPluginAdmin.php");
 		}
 
-		self::setSessionHandler();
-
 		self::initSettings();
+		self::setSessionHandler();
 		self::initMail($GLOBALS['DIC']);
 		self::initAvatar($GLOBALS['DIC']);
 		self::initCustomObjectIcons($GLOBALS['DIC']);
@@ -2010,7 +2008,7 @@ class ilInitialisation
 
 		$c["bt.task_manager"] = function ($c) use ($sync) {
 			if ($sync == 'sync') {
-				return new \ILIAS\BackgroundTasks\Implementation\TaskManager\BasicTaskManager($c["bt.persistence"]);
+				return new \ILIAS\BackgroundTasks\Implementation\TaskManager\SyncTaskManager($c["bt.persistence"]);
 			} elseif ($sync == 'async') {
 				return new \ILIAS\BackgroundTasks\Implementation\TaskManager\AsyncTaskManager($c["bt.persistence"]);
 			} else {
