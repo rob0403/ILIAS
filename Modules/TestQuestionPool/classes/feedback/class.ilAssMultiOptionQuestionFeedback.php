@@ -365,6 +365,47 @@ abstract class ilAssMultiOptionQuestionFeedback extends ilAssQuestionFeedback
 		
 		return $feedbackId;
 	}
+	
+	/**
+	 * @param int $feedbackId
+	 * @return bool
+	 */
+	protected function isSpecificAnswerFeedbackId($feedbackId)
+	{
+		$row = $this->db->fetchAssoc($this->db->queryF(
+			"SELECT COUNT(feedback_id) cnt FROM {$this->getSpecificFeedbackTableName()}
+					WHERE question_fi = %s AND feedback_id = %s",
+			array('integer', 'integer'), array($this->questionOBJ->getId(), $feedbackId)
+		));
+		
+		return (bool)$row['cnt'];
+	}
+	
+	/**
+	 * returns an array mapping feedback ids to answer indexes
+	 * for all answer options of question
+	 * 
+	 * @final
+	 * @access protected
+	 * @param integer $questionId
+	 * @return array $feedbackIdByAnswerIndexMap
+	 */
+	final protected function getSpecificAnswerFeedbackIdByAnswerIndexMap($questionId)
+	{
+		$res = $this->db->queryF(
+			"SELECT feedback_id, answer FROM {$this->getSpecificFeedbackTableName()} WHERE question_fi = %s",
+			array('integer'), array($questionId)
+		);
+		
+		$feedbackIdByAnswerIndexMap = array();
+		
+		while( $row = $this->db->fetchAssoc($res) )
+		{
+			$feedbackIdByAnswerIndexMap[ $row['answer'] ] = $row['feedback_id'];
+		}
+		
+		return $feedbackIdByAnswerIndexMap;
+	}
 
 	/**
 	 * returns the table name for specific feedback
