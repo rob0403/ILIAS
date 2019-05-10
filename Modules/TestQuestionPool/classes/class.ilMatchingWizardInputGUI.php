@@ -23,6 +23,7 @@ class ilMatchingWizardInputGUI extends ilTextInputGUI
 	protected $qstObject = null;
 	protected $suffixes = array();
 	protected $hideImages = false;
+	protected $maxLengthInput = 900;
 
 	/**
 	 * Constructor
@@ -335,7 +336,7 @@ class ilMatchingWizardInputGUI extends ilTextInputGUI
 			$tpl->setVariable("SINGLELINE_ID", $this->getPostVar() . "[answer][$i]");
 			$tpl->setVariable("SINGLELINE_ROW_NUMBER", $i);
 			$tpl->setVariable("SINGLELINE_POST_VAR", $this->getPostVar());
-			$tpl->setVariable("MAXLENGTH", $this->getMaxLength());
+			$tpl->setVariable("MAXLENGTH", $this->maxLengthInput);
 			if ($this->getDisabled())
 			{
 				$tpl->setVariable("DISABLED_SINGLELINE", " disabled=\"disabled\"");

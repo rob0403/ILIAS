@@ -887,7 +887,7 @@ class assImagemapQuestion extends assQuestion implements ilObjQuestionScoringAdj
 		$text = parent::getRTETextWithMediaObjects();
 		foreach ($this->answers as $index => $answer)
 		{
-			$text .= $this->feedbackOBJ->getSpecificAnswerFeedbackContent($this->getId(), $index);
+			$text .= $this->feedbackOBJ->getSpecificAnswerFeedbackContent($this->getId(),0, $index);
 		}
 		return $text;
 	}
@@ -969,7 +969,7 @@ class assImagemapQuestion extends assQuestion implements ilObjQuestionScoringAdj
 				"state"            => $answer_obj->getState(),
 				"area"             => $answer_obj->getArea(),
 				"feedback"         => $this->formatSAQuestion(
-					$this->feedbackOBJ->getSpecificAnswerFeedbackExportPresentation($this->getId(), $key)
+					$this->feedbackOBJ->getSpecificAnswerFeedbackExportPresentation($this->getId(),0, $key)
 				)
 			));
 			$order++;

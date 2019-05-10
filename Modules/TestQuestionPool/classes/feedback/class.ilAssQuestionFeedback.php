@@ -133,10 +133,11 @@ abstract class ilAssQuestionFeedback
 	 * @abstract
 	 * @access public
 	 * @param integer $questionId
+	 * @param integer $questionIndex
 	 * @param integer $answerIndex
 	 * @return string $specificAnswerFeedbackTestPresentationHTML
 	 */
-	abstract public function getSpecificAnswerFeedbackTestPresentation($questionId, $answerIndex);
+	abstract public function getSpecificAnswerFeedbackTestPresentation($questionId, $questionIndex, $answerIndex);
 
 	/**
 	 * completes a given form object with the GENERIC form properties
@@ -351,10 +352,11 @@ abstract class ilAssQuestionFeedback
 	 * @abstract
 	 * @access public
 	 * @param integer $questionId
+	 * @param integer $questionIndex
 	 * @param integer $answerIndex
 	 * @return string $feedbackContent
 	 */
-	abstract public function getSpecificAnswerFeedbackContent($questionId, $answerIndex);
+	abstract public function getSpecificAnswerFeedbackContent($questionId, $questionIndex, $answerIndex);
 
 	/**
 	 * returns the SPECIFIC feedback content for a given question id and answer index.
@@ -426,11 +428,12 @@ abstract class ilAssQuestionFeedback
 	 * @abstract
 	 * @access public
 	 * @param integer $questionId
+	 * @param integer $questionIndex
 	 * @param integer $answerIndex
 	 * @param string $feedbackContent
 	 * @return integer $feedbackId
 	 */
-	abstract public function saveSpecificAnswerFeedbackContent($questionId, $answerIndex, $feedbackContent);
+	abstract public function saveSpecificAnswerFeedbackContent($questionId, $questionIndex, $answerIndex, $feedbackContent);
 	
 	/**
 	 * deletes all GENERIC feedback contents (and page objects if required)
@@ -718,8 +721,8 @@ abstract class ilAssQuestionFeedback
 	 * 
 	 * @final
 	 * @access private
-	 * @param type $pageObjectType
-	 * @param type $pageObjectId
+	 * @param string $pageObjectType
+	 * @param integer $pageObjectId
 	 * @return string $pageObjectEditingLink
 	 */
 	final private function getPageObjectEditingLink($pageObjectType, $pageObjectId)
@@ -759,8 +762,8 @@ abstract class ilAssQuestionFeedback
 	 * 
 	 * @final
 	 * @access protected
-	 * @param type $pageObjectType
-	 * @param type $pageObjectId
+	 * @param string $pageObjectType
+	 * @param integer $pageObjectId
 	 * @return string $pageObjectContent
 	 */
 	final protected function getPageObjectContent($pageObjectType, $pageObjectId)
@@ -787,8 +790,8 @@ abstract class ilAssQuestionFeedback
 	 * 
 	 * @final
 	 * @access protected
-	 * @param type $pageObjectType
-	 * @param type $pageObjectId
+	 * @param string $pageObjectType
+	 * @param integer $pageObjectId
 	 * @return string $pageObjectXML
 	 */
 	final protected function getPageObjectXML($pageObjectType, $pageObjectId)
@@ -807,8 +810,8 @@ abstract class ilAssQuestionFeedback
 	 * 
 	 * @final
 	 * @access private
-	 * @param type $pageObjectType
-	 * @param type $pageObjectId
+	 * @param string $pageObjectType
+	 * @param integer $pageObjectId
 	 */
 	final private function ensurePageObjectExists($pageObjectType, $pageObjectId)
 	{
@@ -885,8 +888,8 @@ abstract class ilAssQuestionFeedback
 	 * 
 	 * @final
 	 * @access protected
-	 * @param type $pageObjectType
-	 * @param type $pageObjectId
+	 * @param string $pageObjectType
+	 * @param integer $pageObjectId
 	 */
 	final protected function ensurePageObjectDeleted($pageObjectType, $pageObjectId)
 	{
@@ -1015,10 +1018,11 @@ abstract class ilAssQuestionFeedback
 	 * @abstract
 	 * @access public 
 	 * @param integer $questionId
+	 * @param integer $questionIndex
 	 * @param integer $answerIndex
 	 * @return string $specificFeedbackExportPresentation
 	 */
-	abstract public function getSpecificAnswerFeedbackExportPresentation($questionId, $answerIndex);
+	abstract public function getSpecificAnswerFeedbackExportPresentation($questionId, $questionIndex, $answerIndex);
 	
 	/**
 	 * imports the given feedback content as generic feedback for the given question id
@@ -1051,10 +1055,11 @@ abstract class ilAssQuestionFeedback
 	 * @abstract
 	 * @access public
 	 * @param integer $questionId
+	 * @param integer $questionIndex
 	 * @param integer $answerIndex
 	 * @param string $feedbackContent
 	 */
-	abstract public function importSpecificAnswerFeedback($questionId, $answerIndex, $feedbackContent);
+	abstract public function importSpecificAnswerFeedback($questionId, $questionIndex, $answerIndex, $feedbackContent);
 	
 	/**
 	 * @param ilAssSelfAssessmentMigrator $migrator

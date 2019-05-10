@@ -1066,7 +1066,7 @@ class assMatchingQuestionGUI extends assQuestionGUI implements ilGuiQuestionScor
 		
 		$matches = array_values($this->object->matchingpairs);
 
-		if( !$this->object->feedbackOBJ->specificAnswerFeedbackExists($matches) )
+		if( !$this->object->feedbackOBJ->specificAnswerFeedbackExists() )
 		{
 			return '';
 		}
@@ -1094,7 +1094,7 @@ class assMatchingQuestionGUI extends assQuestionGUI implements ilGuiQuestionScor
 			}
 			
 			$fb = $this->object->feedbackOBJ->getSpecificAnswerFeedbackTestPresentation(
-				$this->object->getId(), $idx
+				$this->object->getId(),0, $idx
 			);
 			$feedback .= '<tr><td>"' . $ans->definition->text . '"&nbsp;' . $this->lng->txt("matches") . '&nbsp;"';
 			$feedback .= $ans->term->text . '"</td><td>';
