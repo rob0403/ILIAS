@@ -50,6 +50,7 @@ class ilObjSurveyListGUI extends ilObjectListGUI
 		global $DIC;
 
 		$this->lng = $DIC->language();
+		$this->lng->loadLanguageModule("survey");
 		$this->user = $DIC->user();
 		$this->rbacsystem = $DIC->rbac()->system();
 		parent::__construct();
@@ -174,12 +175,11 @@ class ilObjSurveyListGUI extends ilObjectListGUI
 						{
 							$stat = $this->lng->txt("svy_not_started");
 						}
-						$props[] = array("alert" => false, "property" => $lng->txt("participation"),
+						$props[] = array("alert" => false, "property" => $lng->txt("svy_participation"),
 							"value" => $stat, 'propertyNameVisible' => false);
 					}
 					else
 					{
-						$lng->loadLanguageModule("survey");
 						$props[] = array("alert" => false, "property" => "",
 							"value" => $lng->txt("survey_360_list_title"), 'propertyNameVisible' => false);
 					}

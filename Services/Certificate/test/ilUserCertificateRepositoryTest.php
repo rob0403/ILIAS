@@ -27,7 +27,7 @@ class ilUserCertificateRepositoryTest extends \PHPUnit_Framework_TestCase
 				'certificate_content'    => array('clob', '<xml>Some Content</xml>'),
 				'template_values'        => array('clob', '[]'),
 				'valid_until'            => array('integer', null),
-				'version'                => array('text', '1'),
+				'version'                => array('integer', 1),
 				'ilias_version'          => array('text', 'v5.4.0'),
 				'currently_active'       => array('integer', true),
 				'background_image_path'  => array('text', '/some/where/background.jpg'),
@@ -58,7 +58,7 @@ class ilUserCertificateRepositoryTest extends \PHPUnit_Framework_TestCase
 			'<xml>Some Content</xml>',
 			'[]',
 			null,
-			'1',
+			1,
 			'v5.4.0',
 			true,
 			'/some/where/background.jpg',
@@ -88,11 +88,12 @@ class ilUserCertificateRepositoryTest extends \PHPUnit_Framework_TestCase
 				'certificate_content'    => '<xml>Some Content</xml>',
 				'template_values'        => '[]',
 				'valid_until'            => null,
-				'version'                => '1',
+				'version'                => 1,
 				'ilias_version'          => 'v5.4.0',
 				'currently_active'       => true,
 				'background_image_path'  => '/some/where/background.jpg',
 				'thumbnail_image_path'   => array('clob', '/some/where/thumbnail.svg'),
+				'title'                  => 'Some Title'
 			),
 			array(
 				'id'                     => 142,
@@ -105,11 +106,12 @@ class ilUserCertificateRepositoryTest extends \PHPUnit_Framework_TestCase
 				'certificate_content'    => '<xml>Some Other Content</xml>',
 				'template_values'        => '[]',
 				'valid_until'            => null,
-				'version'                => '1',
+				'version'                => 1,
 				'ilias_version'          => 'v5.3.0',
 				'currently_active'       => true,
 				'background_image_path'  => '/some/where/else/background.jpg',
 				'thumbnail_image_path'   => array('clob', '/some/where/thumbnail.svg'),
+				'title'                  => 'Someother Title'
 			)
 		);
 
@@ -129,8 +131,8 @@ class ilUserCertificateRepositoryTest extends \PHPUnit_Framework_TestCase
 
 		$results = $repository->fetchActiveCertificates(400);
 
-		$this->assertEquals(141, $results[0]->getId());
-		$this->assertEquals(142, $results[1]->getId());
+		$this->assertEquals(141, $results[0]->getUserCertificate()->getId());
+		$this->assertEquals(142, $results[1]->getUserCertificate()->getId());
 	}
 
 	public function testFetchActiveCertificateForUserObjectCombination()
@@ -153,7 +155,7 @@ class ilUserCertificateRepositoryTest extends \PHPUnit_Framework_TestCase
 				'certificate_content'    => '<xml>Some Content</xml>',
 				'template_values'        => '[]',
 				'valid_until'            => null,
-				'version'                => '1',
+				'version'                => 1,
 				'ilias_version'          => 'v5.4.0',
 				'currently_active'       => true,
 				'background_image_path'  => '/some/where/background.jpg',
@@ -170,7 +172,7 @@ class ilUserCertificateRepositoryTest extends \PHPUnit_Framework_TestCase
 				'certificate_content'    => '<xml>Some Other Content</xml>',
 				'template_values'        => '[]',
 				'valid_until'            => null,
-				'version'                => '1',
+				'version'                => 1,
 				'ilias_version'          => 'v5.3.0',
 				'currently_active'       => true,
 				'background_image_path'  => '/some/where/else/background.jpg',
@@ -243,7 +245,7 @@ class ilUserCertificateRepositoryTest extends \PHPUnit_Framework_TestCase
 				'certificate_content'    => '<xml>Some Content</xml>',
 				'template_values'        => '[]',
 				'valid_until'            => null,
-				'version'                => '1',
+				'version'                => 1,
 				'ilias_version'          => 'v5.4.0',
 				'currently_active'       => true,
 				'background_image_path'  => '/some/where/background.jpg',
@@ -262,7 +264,7 @@ class ilUserCertificateRepositoryTest extends \PHPUnit_Framework_TestCase
 				'certificate_content'    => '<xml>Some Other Content</xml>',
 				'template_values'        => '[]',
 				'valid_until'            => null,
-				'version'                => '1',
+				'version'                => 1,
 				'ilias_version'          => 'v5.3.0',
 				'currently_active'       => true,
 				'background_image_path'  => '/some/where/else/background.jpg',
@@ -307,7 +309,7 @@ class ilUserCertificateRepositoryTest extends \PHPUnit_Framework_TestCase
 				'certificate_content'    => '<xml>Some Content</xml>',
 				'template_values'        => '[]',
 				'valid_until'            => null,
-				'version'                => '1',
+				'version'                => 1,
 				'ilias_version'          => 'v5.4.0',
 				'currently_active'       => true,
 				'background_image_path'  => '/some/where/background.jpg',

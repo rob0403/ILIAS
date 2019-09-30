@@ -1517,7 +1517,7 @@ class ilContainerGUI extends ilObjectGUI implements ilDesktopItemHandling
 			$_POST["id"] = array($_GET["item_ref_id"]);
 		}
 
-		//$ilErr->raiseError("move operation does not work at the moment and is disabled", $ilErr->MESSAGE);
+		$no_cut = [];
 
 		if (!isset($_POST["id"]))
 		{
@@ -1584,6 +1584,8 @@ class ilContainerGUI extends ilObjectGUI implements ilDesktopItemHandling
 		$objDefinition = $this->obj_definition;
 		$ilErr = $this->error;
 
+		$no_copy = [];
+
 		if ($_GET["item_ref_id"] != "")
 		{
 			$_POST["id"] = array($_GET["item_ref_id"]);
@@ -1633,7 +1635,7 @@ class ilContainerGUI extends ilObjectGUI implements ilDesktopItemHandling
 		}
 
 		// IF THERE IS ANY OBJECT WITH NO PERMISSION TO 'delete'
-		if (count($no_copy))
+		if (is_array($no_copy) && count($no_copy))
 		{
 			$titles = array();
 			foreach((array) $no_copy as $copy_id)
@@ -1670,7 +1672,10 @@ class ilContainerGUI extends ilObjectGUI implements ilDesktopItemHandling
 	{
 		$rbacsystem = $this->rbacsystem;
 		$ilErr = $this->error;
-		
+
+		$no_download = [];
+		$no_perm = [];
+
 		if ($_GET["item_ref_id"] != "")
 		{
 			$_POST["id"] = array($_GET["item_ref_id"]);
@@ -1834,6 +1839,9 @@ class ilContainerGUI extends ilObjectGUI implements ilDesktopItemHandling
 		$ilCtrl = $this->ctrl;
 		$ilErr = $this->error;
 
+		$no_cut = [];
+		$no_link = [];
+
 		if ($_GET["item_ref_id"] != "")
 		{
 			$_POST["id"] = array($_GET["item_ref_id"]);
@@ -1930,6 +1938,11 @@ class ilContainerGUI extends ilObjectGUI implements ilDesktopItemHandling
 		$lng = $this->lng;
 		$ctrl = $this->ctrl;
 		$ui = $this->ui;
+
+		$exists = [];
+		$is_child = [];
+		$not_allowed_subobject = [];
+		$no_paste = [];
 
 		$command = $_SESSION['clipboard']['cmd'];
 		if(!in_array($command, array('cut', 'link', 'copy')))
@@ -2373,6 +2386,11 @@ class ilContainerGUI extends ilObjectGUI implements ilDesktopItemHandling
 		$ilCtrl = $this->ctrl;
 		$ilErr = $this->error;
 
+        $exists = [];
+        $no_paste = [];
+        $is_child = [];
+        $not_allowed_subobject = [];
+
 		// BEGIN ChangeEvent: Record paste event.
 		require_once('Services/Tracking/classes/class.ilChangeEvent.php');
 		// END ChangeEvent: Record paste event.
@@ -2426,25 +2444,25 @@ class ilContainerGUI extends ilObjectGUI implements ilDesktopItemHandling
 		////////////////////////////
 		// process checking results
 		// BEGIN WebDAV: Copying an object into the same container is allowed
-		if (count($exists) && $_SESSION["clipboard"]["cmd"] != "copy")
+		if (count($exists) > 0 && $_SESSION["clipboard"]["cmd"] != "copy")
 		// END WebDAV: Copying an object into the same container is allowed
 		{
 			$ilErr->raiseError($this->lng->txt("msg_obj_exists"), $ilErr->MESSAGE);
 		}
 
-		if (count($is_child))
+		if (count($is_child) > 0)
 		{
 			$ilErr->raiseError($this->lng->txt("msg_not_in_itself")." ".implode(',',$is_child),
 				$ilErr->MESSAGE);
 		}
 
-		if (count($not_allowed_subobject))
+		if (count($not_allowed_subobject) > 0)
 		{
 			$ilErr->raiseError($this->lng->txt("msg_may_not_contain")." ".implode(',',$not_allowed_subobject),
 				$ilErr->MESSAGE);
 		}
 
-		if (count($no_paste))
+		if (count($no_paste) > 0)
 		{
 			$ilErr->raiseError($this->lng->txt("msg_no_perm_paste")." ".
 									 implode(',',$no_paste), $ilErr->MESSAGE);
@@ -3929,9 +3947,9 @@ class ilContainerGUI extends ilObjectGUI implements ilDesktopItemHandling
 				}
 			}
 			if ($allow_lso) {
-				$whiltelist = $exp->getTypeWhiteList();
+				$whitelist = $exp->getTypeWhiteList();
 				$whitelist[] = 'lso';
-				$exp->setTypeWhiteList($whiltelist);
+				$exp->setTypeWhiteList($whitelist);
 			}
 		}
 

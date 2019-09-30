@@ -51,6 +51,7 @@ abstract class ilObjPortfolioBaseGUI extends ilObject2GUI
 		
 		$this->lng->loadLanguageModule("prtf");
 		$this->lng->loadLanguageModule("user");		
+		$this->lng->loadLanguageModule("obj");		
 	}
 	
 	protected function addLocatorItems()
@@ -140,8 +141,11 @@ abstract class ilObjPortfolioBaseGUI extends ilObject2GUI
 			// edit
 			else
 			{
-				$this->setContentStyleSheet();					
-				$this->tpl->setContent($ret);
+				$this->setContentStyleSheet();
+				if (is_string($ret))
+				{
+					$this->tpl->setContent($ret);
+				}
 			}
 		}			
 	}

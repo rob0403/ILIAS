@@ -167,7 +167,11 @@ class ilQuestionExporter
 	}
 	
 	private function assMultipleChoice() {
-		$main_tpl = $GLOBALS['DIC']["tpl"];
+		// do not! use $GLOBALS['DIC']["tpl"]
+		// or $DIC->ui()->mainTemplate()
+		// at this point because LMs does init an own main template
+		// and currently replaces only $GLOBALS["tpl"] with the new one
+		$main_tpl = $GLOBALS["tpl"];
 		$this->q_gui->populateJavascriptFilesRequiredForWorkForm($main_tpl);
 		$main_tpl->addCss('Modules/Test/templates/default/ta.css');
 		
@@ -371,6 +375,7 @@ class ilQuestionExporter
 	}
 
 	private function assTextSubset() {
+		$maxlength = $this->json_decoded->maxlength == 0 ? 4096 : $this->json_decoded->maxlength;
 		$this->tpl->setCurrentBlock("textsubset");
 		$this->tpl->setVariable("VAL_ID", $this->json_decoded->id);
 		$this->tpl->setVariable("TXT_SUBMIT_ANSWERS", $this->lng->txt("cont_submit_answers"));

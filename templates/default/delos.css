@@ -6957,8 +6957,16 @@ button.close {
     display: flex;
     flex-direction: column;
   }
-  .row-eq-height .il-card :nth-child(4) {
+  .row-eq-height .il-card :last-child {
     flex-grow: 2;
+  }
+}
+/* see bug #25920, limit size of cards for small screens */
+@media (max-width: 768px) {
+  .il-card {
+    max-width: 350px;
+    margin-right: auto;
+    margin-left: auto;
   }
 }
 .il-deck .row {
@@ -7491,7 +7499,9 @@ hr.il-divider-with-label {
   float: none;
   zoom: 1;
   vertical-align: top;
-  width: auto;
+  /* using auto has issues on firefox, using calc(100%-45px) seems to have issues on IE,
+        see known issues at https://caniuse.com/#search=calc */
+  width: 100%;
 }
 .il-narrow-content .il-item .dropdown {
   position: static;
@@ -7714,7 +7724,9 @@ hr.il-divider-with-label {
 .icon.grpr .abbreviation,
 .icon.bdga .abbreviation,
 .icon.wfe .abbreviation,
-.icon.iass .abbreviation {
+.icon.iass .abbreviation,
+.icon.copa .abbreviation,
+.icon.lso .abbreviation {
   display: none;
 }
 .icon.grp {
@@ -8034,6 +8046,12 @@ hr.il-divider-with-label {
 }
 .icon.iass {
   background-image: url("images/icon_iass.svg");
+}
+.icon.copa {
+  background-image: url("images/icon_copa.svg");
+}
+.icon.lso {
+  background-image: url("images/icon_lso.svg");
 }
 .icon.outlined {
   filter: brightness(0);
@@ -8359,8 +8377,11 @@ hr.il-divider-with-label {
 .icon.outlined.iass {
   background-image: url("images/outlined/icon_iass.svg");
 }
-.icon.copa {
-  background-image: url("images/icon_copa.svg");
+.icon.outlined.copa {
+  background-image: url("images/outlined/icon_copa.svg");
+}
+.icon.outlined.lso {
+  background-image: url("images/outlined/icon_lso.svg");
 }
 .il-viewcontrol-mode .ilSubmitInactive,
 .il-viewcontrol-section .ilSubmitInactive,
@@ -8864,6 +8885,15 @@ fieldset[disabled] .il-table-presentation-viewcontrols .btn-default:not(.disable
 }
 .il-workflow-container .il-workflow-step:last-child .text {
   border-left: none;
+}
+.il-workflow-container .il-workflow-step .text .il-workflow-step-label .btn-link,
+.il-workflow-container .il-workflow-step .text .il-workflow-step-description {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.il-workflow-container .il-workflow-step .text .il-workflow-step-description {
+  display: block;
 }
 .il-workflow-container .not-available:before,
 .il-workflow-container .no-longer-available:before {
@@ -9549,6 +9579,183 @@ div.alert ul > li:before {
 }
 .bg-primary {
   color: white;
+}
+/*
+	These classes are used to limit the number of rows when displaying larger chunks of text.
+	The mixin receives @height-in-rows as an integer. The classes il-multi-line-cap-2,3,5,10
+	can be used to limit the number of rows for text to 2,3,5 or 10 lines in any template,
+	e.g. the Standard Listing Panels limit the property values to 3 lines using il-multi-line-cap-3
+
+	Technical discussion can be found in https://mantis.ilias.de/view.php?id=21583
+	The background/gradient fallback can be removed as soon as all browsers support line-clamp.
+ */
+.il-multi-line-cap-2 {
+  position: relative;
+  max-height: 3em;
+  overflow: hidden;
+  line-height: 1.5;
+  /* edge, chrome, safari go here... */
+  /* may come with next firefox 68, https://caniuse.com/#search=clamp */
+}
+.il-multi-line-cap-2:after {
+  content: "";
+  text-align: right;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 30%;
+  height: 1.5em;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff 80%);
+}
+@supports (-webkit-line-clamp: 2) {
+  .il-multi-line-cap-2 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .il-multi-line-cap-2:after {
+    display: none;
+  }
+}
+@supports (-moz-line-clamp: 2) {
+  .il-multi-line-cap-2 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -moz-box;
+    -moz-line-clamp: 2;
+    -moz-box-orient: vertical;
+  }
+  .il-multi-line-cap-2:after {
+    display: none;
+  }
+}
+.il-multi-line-cap-3 {
+  position: relative;
+  max-height: 4.5em;
+  overflow: hidden;
+  line-height: 1.5;
+  /* edge, chrome, safari go here... */
+  /* may come with next firefox 68, https://caniuse.com/#search=clamp */
+}
+.il-multi-line-cap-3:after {
+  content: "";
+  text-align: right;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 30%;
+  height: 1.5em;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff 80%);
+}
+@supports (-webkit-line-clamp: 2) {
+  .il-multi-line-cap-3 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+  .il-multi-line-cap-3:after {
+    display: none;
+  }
+}
+@supports (-moz-line-clamp: 2) {
+  .il-multi-line-cap-3 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -moz-box;
+    -moz-line-clamp: 3;
+    -moz-box-orient: vertical;
+  }
+  .il-multi-line-cap-3:after {
+    display: none;
+  }
+}
+.il-multi-line-cap-5 {
+  position: relative;
+  max-height: 7.5em;
+  overflow: hidden;
+  line-height: 1.5;
+  /* edge, chrome, safari go here... */
+  /* may come with next firefox 68, https://caniuse.com/#search=clamp */
+}
+.il-multi-line-cap-5:after {
+  content: "";
+  text-align: right;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 30%;
+  height: 1.5em;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff 80%);
+}
+@supports (-webkit-line-clamp: 2) {
+  .il-multi-line-cap-5 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+  }
+  .il-multi-line-cap-5:after {
+    display: none;
+  }
+}
+@supports (-moz-line-clamp: 2) {
+  .il-multi-line-cap-5 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -moz-box;
+    -moz-line-clamp: 5;
+    -moz-box-orient: vertical;
+  }
+  .il-multi-line-cap-5:after {
+    display: none;
+  }
+}
+.il-multi-line-cap-10 {
+  position: relative;
+  max-height: 15em;
+  overflow: hidden;
+  line-height: 1.5;
+  /* edge, chrome, safari go here... */
+  /* may come with next firefox 68, https://caniuse.com/#search=clamp */
+}
+.il-multi-line-cap-10:after {
+  content: "";
+  text-align: right;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 30%;
+  height: 1.5em;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff 80%);
+}
+@supports (-webkit-line-clamp: 2) {
+  .il-multi-line-cap-10 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 10;
+    -webkit-box-orient: vertical;
+  }
+  .il-multi-line-cap-10:after {
+    display: none;
+  }
+}
+@supports (-moz-line-clamp: 2) {
+  .il-multi-line-cap-10 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -moz-box;
+    -moz-line-clamp: 10;
+    -moz-box-orient: vertical;
+  }
+  .il-multi-line-cap-10:after {
+    display: none;
+  }
 }
 /* flex grid support start, see http://www.bootply.com/126437 */
 /* deactivated flex grid, since grids in grids will not work correctly width:100%; and flex:1 1 auto; seem to be problems
@@ -10978,6 +11185,10 @@ img.ilSmallIcon {
   -moz-hyphens: auto;
   -webkit-hyphens: auto;
   hyphens: auto;
+}
+span.ilIcalIcon {
+  text-align: initial;
+  font-size: 133%;
 }
 /* Component Imports */
 /* Services/Accordion */
@@ -13103,8 +13314,8 @@ div.ilTopMemberView h3 {
 ul.il-mm-selfloading {
   width: 768px;
   list-style: none;
-  margin-left: 0;
-  padding-left: 0;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 /* Services/UIComponent/Tabs */
 .nav-tabs > li {
@@ -14136,14 +14347,28 @@ li.smallPad {
 .ilCrsObjAcc {
   margin-bottom: 10px;
 }
+.ilCourseObjectiveAccResults {
+  padding-top: 10px;
+}
+.ilCourseObjectiveAccResult {
+  font-size: 80%;
+}
+.ilCourseObjectiveAccSummary {
+  font-size: 120%;
+  padding-top: 15px;
+}
+.ilCourseObjectiveProgressBarContainer .text-comparision {
+  display: none;
+}
+.ilCourseObjectiveProgressBarContainer {
+  float: right;
+  max-width: 200px;
+  padding: 20px;
+}
 /* LOK progress bars */
 .ilCourseObjectiveProgressBar {
   padding-right: 5px;
   float: right;
-}
-.ilCourseObjectiveProgressBarContainer {
-  float: right;
-  padding-left: 10px;
 }
 .ilCourseObjectiveProgressBarContainer > .progress {
   margin: 5px 0 0;
@@ -14471,6 +14696,12 @@ div#ilContRepIntro img {
 }
 .ilContainerTileRows .card-no-highlight {
   height: 0px;
+}
+.ilContainerTileRows .il-chart-progressmeter-container {
+  height: 100%;
+}
+.ilContainerTileRows .il-card h5 button.btn {
+  font-size: inherit;
 }
 .ilContainerShowMore {
   padding: 15px 10px;
@@ -15679,6 +15910,7 @@ body.ilPrtfPdfBody .ilPCMyCoursesToggle img {
 }
 #onscreenchat-container .popover {
   max-width: 200px;
+  min-height: 100px;
 }
 #onscreenchat-container .popover a {
   border: 1px solid white;

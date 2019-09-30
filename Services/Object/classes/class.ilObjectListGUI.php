@@ -160,6 +160,11 @@ class ilObjectListGUI
 	static protected $tpl_component = "Services/Container";
 
 	/**
+	 * @var ilPathGUI|null
+	 */
+	protected $path_gui = null;
+
+	/**
 	 * @var \ILIAS\DI\UIServices
 	 */
 	protected $ui;
@@ -609,10 +614,11 @@ class ilObjectListGUI
 	* @param int
 	* @return void
 	*/
-	function enablePath($a_path, $a_start_node = null)
+	function enablePath($a_path, $a_start_node = null, \ilPathGUI $path_gui = null)
 	{
 		$this->path_enabled = $a_path;
 		$this->path_start_node = (int)$a_start_node;
+		$this->path_gui = $path_gui;
 	}
 
 	/**
@@ -1824,6 +1830,7 @@ class ilObjectListGUI
 		$redraw_js = "il.Object.redrawListItem(" . $note_ref_id . ");";
 
 		// add common properties (comments, notes, tags)
+		require_once 'Services/Notes/classes/class.ilNote.php';
 		if ((self::$cnt_notes[$note_obj_id][IL_NOTE_PRIVATE] > 0 ||
 				self::$cnt_notes[$note_obj_id][IL_NOTE_PUBLIC] > 0 ||
 				self::$cnt_tags[$note_obj_id] > 0 ||
@@ -3312,8 +3319,12 @@ class ilObjectListGUI
 		
 		if($this->getPathStatus() != false)
 		{
-			include_once 'Services/Tree/classes/class.ilPathGUI.php';
-			$path_gui = new ilPathGUI();
+			if(!$this->path_gui instanceof \ilPathGUI) {
+				$path_gui = new \ilPathGUI();
+			} else {
+				$path_gui = $this->path_gui;
+			}
+
 			$path_gui->enableTextOnly(!$this->path_linked);
 			$path_gui->setUseImages(false);
 			
@@ -3692,7 +3703,10 @@ class ilObjectListGUI
 		$this->tpl->setVariable("ADDITIONAL", $this->getAdditionalInformation());
 		
 		// #11554 - make sure that internal ids are reset
-		$this->ctrl->setParameter($this->getContainerObject(), "item_ref_id", "");
+		if (is_object($this->getContainerObject()))
+		{
+			$this->ctrl->setParameter($this->getContainerObject(), "item_ref_id", "");
+		}
 		
 		return $this->tpl->get();
 	}

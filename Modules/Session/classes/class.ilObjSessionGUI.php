@@ -633,9 +633,9 @@ class ilObjSessionGUI extends ilObjectGUI implements ilDesktopItemHandling
 				'&nbsp;',
 				$html);
 		}
-		
 
-		
+
+
 		// Session information
 		if(strlen($this->object->getLocation()) or strlen($this->object->getDetails()))
 		{
@@ -643,15 +643,19 @@ class ilObjSessionGUI extends ilObjectGUI implements ilDesktopItemHandling
 		}
 		if(strlen($location = $this->object->getLocation()))
 		{
-			$info->addProperty($this->lng->txt('event_location'),
-							   nl2br($this->object->getLocation()));
+			$info->addProperty(
+				$this->lng->txt('event_location'),
+				ilUtil::makeClickable(nl2br($this->object->getLocation()),true)
+			);
 		}
 		if(strlen($this->object->getDetails()))
 		{
-			$info->addProperty($this->lng->txt('event_details_workflow'),
-							   nl2br($this->object->getDetails()));
+			$info->addProperty(
+				$this->lng->txt('event_details_workflow'),
+				ilUtil::makeClickable(nl2br($this->object->getDetails()),true)
+			);
 		}
-		
+
 		$record_gui = new ilAdvancedMDRecordGUI(ilAdvancedMDRecordGUI::MODE_INFO,'sess',$this->object->getId());
 		$record_gui->setInfoObject($info);
 		$record_gui->parse();
@@ -766,8 +770,11 @@ class ilObjSessionGUI extends ilObjectGUI implements ilDesktopItemHandling
 		{
 			$ilErr->setMessage($this->lng->txt('err_check_input'));
 		}
-		
-		if(!$this->record_gui->importEditFormPostValues())
+
+		if(
+			$this->record_gui instanceof \ilAdvancedMDRecordGUI &&
+			!$this->record_gui->importEditFormPostValues()
+		)
 		{
 			$ilErr->setMessage($this->lng->txt('err_check_input'));
 		}
@@ -797,9 +804,12 @@ class ilObjSessionGUI extends ilObjectGUI implements ilDesktopItemHandling
 			array(
 				ilObjectServiceSettingsGUI::CUSTOM_METADATA,
 			)
-		);		
-		$this->record_gui->writeEditForm($this->object->getId());
-		
+		);
+		if($this->record_gui instanceof \ilAdvancedMDRecordGUI)
+		{
+			$this->record_gui->writeEditForm($this->object->getId());
+		}
+
 		
 		// apply didactic template?
 		$dtpl = $this->getDidacticTemplateVar("dtpl");
@@ -1029,13 +1039,15 @@ class ilObjSessionGUI extends ilObjectGUI implements ilDesktopItemHandling
 		{
 			$ilErr->setMessage($this->lng->txt('err_check_input'));
 		}
-		
-		if(!$this->record_gui->importEditFormPostValues())
+
+		if(
+			$this->record_gui instanceof \ilAdvancedMDRecordGUI &&
+			!$this->record_gui->importEditFormPostValues()
+		)
 		{
 			$ilErr->setMessage($this->lng->txt('err_check_input'));
 		}
-		
-		
+
 		$this->load();
 		
 		$this->object->validate();
@@ -1058,9 +1070,12 @@ class ilObjSessionGUI extends ilObjectGUI implements ilDesktopItemHandling
 				ilObjectServiceSettingsGUI::CUSTOM_METADATA,
 			)
 		);
-		$this->record_gui->writeEditForm();
+		if($this->record_gui instanceof \ilAdvancedMDRecordGUI)
+		{
+			$this->record_gui->writeEditForm();
+		}
 		$this->handleFileUpload();
-		
+
 		// if autofill has been activated trigger process
 		if(!$old_autofill &&
 			$this->object->hasWaitingListAutoFill())
@@ -2210,6 +2225,82 @@ class ilObjSessionGUI extends ilObjectGUI implements ilDesktopItemHandling
 		$link .= ilLink::_getLink($this->object->getRefId());
 		return rawurlencode(base64_encode($link));
 	}
+
+	/**
+	 * Import
+	 */
+	protected function importFileObject($parent_id = null, $a_catch_errors = true)
+	{
+		$objDefinition = $this->objDefinition;
+		$tpl = $this->tpl;
+		$ilErr = $this->ilErr;
+
+		if(!$parent_id)
+		{
+			$parent_id = $_GET["ref_id"];
+		}
+		$new_type = $_REQUEST["new_type"];
+
+		// create permission is already checked in createObject. This check here is done to prevent hacking attempts
+		if (!$this->checkPermissionBool("create", "", $new_type))
+		{
+			$ilErr->raiseError($this->lng->txt("no_create_permission"));
+		}
+
+		$this->lng->loadLanguageModule($new_type);
+		$this->ctrl->setParameter($this, "new_type", $new_type);
+
+		$form = $this->initImportForm($new_type);
+		if ($form->checkInput())
+		{
+			// :todo: make some check on manifest file
+			include_once("./Services/Export/classes/class.ilImport.php");
+			$imp = new ilImport((int) $parent_id);
+			try
+			{
+				$new_id = $imp->importObject(null, $_FILES["importfile"]["tmp_name"],
+					$_FILES["importfile"]["name"], $new_type);
+			}
+			catch (ilException $e)
+			{
+				$this->tmp_import_dir = $imp->getTemporaryImportDir();
+				if (!$a_catch_errors)
+				{
+					throw $e;
+				}
+				// display message and form again
+				ilUtil::sendFailure($this->lng->txt("obj_import_file_error")." <br />".$e->getMessage());
+				$form->setValuesByPost();
+				$tpl->setContent($form->getHtml());
+				return;
+			}
+
+			if ($new_id > 0)
+			{
+				$this->ctrl->setParameter($this, "new_type", "");
+				$newObj = ilObjectFactory::getInstanceByObjId($new_id);
+				$this->afterImport($newObj);
+			}
+			// import failed
+			else
+			{
+				if($objDefinition->isContainer($new_type))
+				{
+					ilUtil::sendFailure($this->lng->txt("container_import_zip_file_invalid"));
+				}
+				else
+				{
+					// not enough information here...
+					return;
+				}
+			}
+		}
+
+		// display form to correct errors
+		$form->setValuesByPost();
+		$tpl->setContent($form->getHtml());
+	}
+
 	
 }
 ?>

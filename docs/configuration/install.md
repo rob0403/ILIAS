@@ -27,6 +27,7 @@ ILIAS is a powerful Open Source Learning Management System for developing and re
       1. [MySQL Strict Mode \(5.6+\)](#mysql-strict-mode-56)
       1. [MySQL Perfomance tuning \(OPTIONAL\)](#mysql-perfomance-tuning-optional)
    1. [E-Mail Configuration \(OPTIONAL\)](#e-mail-configuration-optional)
+   1. [WebDAV Configuration \(OPTIONAL\)](#webdav-configuration-optional)
    1. [Install other Depedencies](#install-other-depedencies)
       1. [Optional Dependencies](#optional-dependencies)
    1. [Installation Wizard](#installation-wizard)
@@ -113,7 +114,7 @@ Please note that different configurations SHOULD be possible, but it might be ha
   * Server OS: Linux
   * Web Server: Apache 2.4 (mod_php, php-fpm)
   * Databases: MySQL/MariaDB 5.6 and 5.7 and Galera (experimental), PostgreSQL 9.x
-  * PHP: Version 7.0, 7.1 and 7.2 are supported
+  * PHP: Version 7.0, 7.1, 7.2 and 7.3 are supported
   * zip: 3.0+
   * unzip: 6.0+
   * Imagemagick: 6.8.9-9+
@@ -387,6 +388,18 @@ hostname=yourserver.example.com
 # YES - Allow the user to specify their own From: address
 # NO - Use the system generated From: address
 FromLineOverride=YES
+```
+
+<a name="webdav-configuration-optional"></a>
+## WebDAV Configuration (OPTIONAL)
+
+Because of a special behaviour in the Windows Explorer, it sometimes fails to add a WebDAV connection with the error code "0x80070043 The Network Name Cannot Be Found".
+
+To prevent this behaviour, add the following rewrite rules to a .htaccess file in your webroot or to the corresponding section of the configuration of your webserver:
+```
+RewriteCond %{HTTP_USER_AGENT} ^(DavClnt)$
+RewriteCond %{REQUEST_METHOD} ^(OPTIONS)$
+RewriteRule .* "-" [R=401,L]
 ```
 
 <a name="install-other-depedencies"></a>
@@ -672,7 +685,7 @@ When you upgrade from rather old versions please make sure that the dependencies
 
 | ILIAS Version   | PHP Version                           |
 |-----------------|---------------------------------------|
-| 5.4.x           | 7.0.x, 7.1.x, 7.2.x                   |
+| 5.4.x           | 7.0.x, 7.1.x, 7.2.x, 7.3.x            |
 | 5.3.x           | 5.6.x, 7.0.x, 7.1.x                   |
 | 5.2.x           | 5.5.x - 5.6.x, 7.0.x, 7.1.x           |
 | 5.0.x - 5.1.x   | 5.3.x - 5.5.x                         |

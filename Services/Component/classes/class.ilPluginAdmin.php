@@ -563,14 +563,13 @@ class ilPluginAdmin {
 
 
 	/**
-	 * @return \ILIAS\GlobalScreen\Provider\StaticProvider\AbstractStaticPluginMainMenuProvider[]
+	 * @return \ILIAS\GlobalScreen\Scope\MainMenu\Provider\AbstractStaticPluginMainMenuProvider[]
 	 */
 	public static function getAllGlobalScreenProviders(): array {
 		$providers = array();
-		// return array(); // current fix
 		foreach (self::getActivePlugins() as $plugin) {
 			$pl = self::getPluginObjectById($plugin['plugin_id']);
-			if ($pl instanceof ilPlugin) {
+			if ($pl instanceof ilPlugin && $pl->isActive()) {
 				array_push($providers, $pl->promoteGlobalScreenProvider());
 			}
 		}

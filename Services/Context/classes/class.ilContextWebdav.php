@@ -90,7 +90,7 @@ class ilContextWebdav implements ilContextTemplate
 	 */
 	public static function supportsPersistentSessions()
 	{
-		return false;
+		return true;
 	}
 	
 	/**
@@ -101,6 +101,14 @@ class ilContextWebdav implements ilContextTemplate
 	public static function supportsPushMessages()
 	{
 		return false;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public static function isSessionMainContext()
+	{
+		return true;
 	}
 
 }

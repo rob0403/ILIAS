@@ -463,6 +463,16 @@ class ilForumCronNotificationDataProvider implements ilForumNotificationMailData
 		}
 
 		return $this->update_user_name;
+
+		// Possible Fix for #25432
+		if (
+			$this->getPosUserAlias() && $this->getPosDisplayUserId() == 0 &&
+			$this->getPosAuthorId() == $this->getPostUpdateUserId()
+		) {
+			return (string) $this->getPosUserAlias();
+		}
+
+		return (string) $this->update_user_name;
 	}
 	
 	/**

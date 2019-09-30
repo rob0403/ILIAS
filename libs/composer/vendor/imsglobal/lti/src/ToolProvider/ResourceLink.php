@@ -282,7 +282,9 @@ class ResourceLink
     {
 
         if (is_null($this->consumer)) {
-            if (!is_null($this->context) || !is_null($this->contextId)) {
+        	// begin-patch ilias
+            #if (!is_null($this->context) || !is_null($this->contextId)) {
+			if($this->context || $this->contextId) {
                 $this->consumer = $this->getContext()->getConsumer();
             } else {
                 $this->consumer = ToolConsumer::fromRecordId($this->consumerId, $this->getDataConnector());
@@ -544,6 +546,8 @@ class ResourceLink
  */
     public function doOutcomesService($action, $ltiOutcome, $user)
     {
+    	global $DIC;
+    	$logger = $DIC->logger()->lti();
 
         $response = false;
         $this->extResponse = null;
@@ -583,6 +587,9 @@ class ResourceLink
                     break;
             }
         }
+
+        $logger->debug('Command is: ' . $do);
+
         if (isset($do)) {
             $value = $ltiOutcome->getValue();
             if (is_null($value)) {
@@ -609,6 +616,10 @@ EOF;
         </sourcedGUID>{$xml}
       </resultRecord>
 EOF;
+
+                $logger->debug($urlLTI11);
+                $logger->debug('xml for doLTI11Service: ' . $xml);
+
                 if ($this->doLTI11Service($do, $urlLTI11, $xml)) {
                     switch ($action) {
                         case self::EXT_READ:
@@ -624,7 +635,7 @@ EOF;
                     }
                 }
             } else {
-                $params = array();
+				$params = array();
                 $params['sourcedid'] = $sourcedId;
                 $params['result_resultscore_textstring'] = $value;
                 if (!empty($ltiOutcome->language)) {
@@ -642,7 +653,12 @@ EOF;
                 if (!empty($ltiOutcome->data_source)) {
                     $params['result_datasource'] = $ltiOutcome->data_source;
                 }
-                if ($this->doService($do, $urlExt, $params)) {
+
+                $logger->debug($urlExt);
+				$logger->dump($params);
+
+
+				if ($this->doService($do, $urlExt, $params)) {
                     switch ($action) {
                         case self::EXT_READ:
                             if (isset($this->extNodes['result']['resultscore']['textstring'])) {
@@ -1161,6 +1177,10 @@ EOF;
             if ($http->send()) {
                 $this->extResponse = $http->response;
                 $this->extResponseHeaders = $http->responseHeaders;
+
+                \ilLoggerFactory::getLogger('lti')->debug('Response: ' . $http->response);
+				\ilLoggerFactory::getLogger('lti')->debug('Response: ' . $http->responseHeaders);
+
                 try {
                     $this->extDoc = new DOMDocument();
                     $this->extDoc->loadXML($http->response);
@@ -1169,10 +1189,14 @@ EOF;
                         $ok = true;
                     }
                 } catch (\Exception $e) {
+                	\ilLoggerFactory::getLogger('lti')->warning('Outcome failed with message: ' . $e->getMessage());
                 }
             }
             $this->extRequest = $http->request;
             $this->extRequestHeaders = $http->requestHeaders;
+
+            \ilLoggerFactory::getLogger('lti')->debug('Request: ' . $http->request);
+			\ilLoggerFactory::getLogger('lti')->debug('RequestHeaders: ' . $http->requestHeaders);
         }
 
         return $ok;
@@ -1228,10 +1252,16 @@ EOD;
             $header .= "\nContent-Type: application/xml";
 // Connect to tool consumer
             $http = new HTTPMessage($url, 'POST', $xmlRequest, $header);
+
+			\ilLoggerFactory::getLogger('lti')->debug('Sending post: ' . $header);
+            \ilLoggerFactory::getLogger('lti')->debug('Sending post: ' . $xmlRequest);
+
 // Parse XML response
             if ($http->send()) {
                 $this->extResponse = $http->response;
                 $this->extResponseHeaders = $http->responseHeaders;
+				\ilLoggerFactory::getLogger('lti')->debug('Got response: ' . $http->response);
+				\ilLoggerFactory::getLogger('lti')->debug('Got response: ' . $http->responseHeaders);
                 try {
                     $this->extDoc = new DOMDocument();
                     $this->extDoc->loadXML($http->response);
@@ -1241,8 +1271,13 @@ EOD;
                         $ok = true;
                     }
                 } catch (\Exception $e) {
+                	\ilLoggerFactory::getLogger('lti')->warning('lti 1.1 outcome failed with message: ' . $e->getMessage());
                 }
             }
+            else {
+				\ilLoggerFactory::getLogger('lti')->debug('Got response: ' . $http->response);
+				\ilLoggerFactory::getLogger('lti')->debug('Got response: ' . $http->responseHeaders);
+			}
             $this->extRequest = $http->request;
             $this->extRequestHeaders = $http->requestHeaders;
         }

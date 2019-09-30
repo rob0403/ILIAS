@@ -67,6 +67,7 @@ class ilKioskPageRenderer
 		//also shift start control up front - this is for legacy-views only!
 		if($control_builder->getStartControl()) {
 			array_unshift($controls, $control_builder->getStartControl());
+			$this->tpl->setVariable("JS_INLINE", $control_builder->getAdditionalJS());
 		}
 
 
@@ -171,16 +172,16 @@ class ilKioskPageRenderer
 
 	protected function getCSSFiles()
 	{
-		$css_files = array();
 		foreach($this->il_tpl->css_files as $il_css_file) {
 			$css_files[] = $il_css_file['file'];
 		}
-		foreach($this->tpl->css_files as $il_css_file) {
+		foreach($this->il_tpl->css_files as $il_css_file) {
 			if(! in_array($il_css_file['file'], $css_files)) {
 				$css_files[] = $il_css_file['file'];
 			}
 		}
 		$css_files[] = \ilUtil::getStyleSheetLocation("filesystem", "delos.css");
+		$css_files[] = \ilUtil::getStyleSheetLocation();
 		$css_files[] = \ilUtil::getNewContentStyleSheetLocation();
 
 		return $css_files;

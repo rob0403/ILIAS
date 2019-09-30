@@ -83,8 +83,6 @@ class ilObjLearningSequence extends ilContainer
 		$this->ctrl = $DIC['ilCtrl'];
 		$this->user = $DIC['ilUser'];
 		$this->tree = $DIC['tree'];
-		$this->ui_factory = $DIC['ui.factory'];
-		$this->ui_renderer = $DIC["ui.renderer"];
 		$this->kiosk_mode_service = $DIC['service.kiosk_mode'];
 		$this->template = $DIC['tpl'];
 		$this->database = $DIC['ilDB'];
@@ -96,6 +94,7 @@ class ilObjLearningSequence extends ilContainer
 		$this->ilias = $DIC['ilias'];
 		$this->il_settings = $DIC['ilSetting'];
 		$this->il_news = $DIC->news();
+		$this->il_condition_handler = new ilConditionHandler();
 
 		$this->data_factory = new \ILIAS\Data\Factory();
 
@@ -120,7 +119,7 @@ class ilObjLearningSequence extends ilContainer
 	{
 		$id = parent::create();
 		if (!$id) {
-			return false;
+			return 0;
 		}
 		$this->raiseEvent(self::E_CREATE);
 
@@ -384,9 +383,17 @@ class ilObjLearningSequence extends ilContainer
 	/**
 	 * @return array<"value" => "option_text">
 	 */
-	public function getPossiblePostConditions(): array
+	public function getPossiblePostConditionsForType(string $type): array
 	{
-		return LSPostConditionTypesDB::getAvailableTypes();
+		$condition_types = $this->il_condition_handler->getOperatorsByTriggerType($type);
+		$conditions = [
+			$this->conditions_db::STD_ALWAYS_OPERATOR => $this->lng->txt('condition_always')
+		];
+		foreach ($condition_types as $cond_type) {
+			$conditions[$cond_type] = $this->lng->txt($cond_type);
+		}
+		return $conditions;
+
 	}
 
 	protected function getLearnerProgressDB(): ilLearnerProgressDB
@@ -457,9 +464,11 @@ class ilObjLearningSequence extends ilContainer
 	 */
 	public function getCurriculumBuilder(array $items, LSUrlBuilder $url_builder=null): ilLSCurriculumBuilder
 	{
+		global $DIC;
+
 		return new ilLSCurriculumBuilder(
 			$items,
-			$this->ui_factory,
+			$DIC["ui.factory"],
 			$this->lng,
 			ilLSPlayer::LSO_CMD_GOTO,
 			$url_builder
@@ -478,6 +487,8 @@ class ilObjLearningSequence extends ilContainer
 	 */
 	public function getSequencePlayer($gui, string $player_command, int $usr_id): ilLSPlayer
 	{
+		global $DIC;
+
 		$lso_ref_id = $this->getRefId();
 		$lso_title = $this->getTitle();
 
@@ -493,7 +504,7 @@ class ilObjLearningSequence extends ilContainer
 		$state_db = $this->getStateDB();
 
 		$control_builder = new LSControlBuilder(
-			$this->ui_factory,
+			$DIC["ui.factory"],
 			$url_builder,
 			$this->lng
 		);
@@ -517,17 +528,19 @@ class ilObjLearningSequence extends ilContainer
 			$curriculum_builder,
 			$view_factory,
 			$kiosk_renderer,
-			$this->ui_factory
+			$DIC["ui.factory"]
 		);
 	}
 
 	protected function getKioskRenderer(LSUrlBuilder $url_builder)
 	{
 		if (!$this->kiosk_renderer) {
+			global $DIC;
+
 			$kiosk_template = new ilTemplate("tpl.kioskpage.html", true, true, 'Modules/LearningSequence');
 
-			$toc_gui = new ilLSTOCGUI($url_builder, $this->template, $this->ctrl);
-			$loc_gui = new ilLSLocatorGUI($url_builder, $this->ui_factory);
+			$toc_gui = new ilLSTOCGUI($url_builder, $this->ctrl);
+			$loc_gui = new ilLSLocatorGUI($url_builder, $DIC["ui.factory"]);
 
 			$window_title = $this->il_settings->get('short_inst_name');
 			if($window_title === false) {
@@ -536,7 +549,7 @@ class ilObjLearningSequence extends ilContainer
 
 			$this->kiosk_renderer = new ilKioskPageRenderer(
 				$this->template,
-				$this->ui_renderer,
+				$DIC["ui.renderer"],
 				$kiosk_template,
 				$toc_gui,
 				$loc_gui,

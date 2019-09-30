@@ -532,43 +532,59 @@ $ilDB->modifyTableColumn('il_mm_items', 'identification', ['length' => 255]);
 ?>
 <#35>
 <?php
-$ilDB->addIndex('il_orgu_permissions', array('context_id'), 'co');
+if (!$ilDB->indexExistsByFields('il_orgu_permissions', ['context_id'])) {
+	$ilDB->addIndex('il_orgu_permissions', array( 'context_id' ), 'co');
+}
 ?>
 <#36>
 <?php
-$ilDB->addIndex('il_orgu_permissions', array('position_id'), 'po');
+if (!$ilDB->indexExistsByFields('il_orgu_permissions', ['position_id'])) {
+	$ilDB->addIndex('il_orgu_permissions', array( 'position_id' ), 'po');
+}
 ?>
 <#37>
 <?php
-$ilDB->modifyTableColumn('il_orgu_permissions', 'operations', array("length" => 256));
+if (!$ilDB->indexExistsByFields('il_orgu_permissions', ['operations'])) {
+	$ilDB->modifyTableColumn('il_orgu_permissions', 'operations', array( "length" => 256 ));
+}
 ?>
 <#38>
 <?php
-$ilDB->addIndex('il_orgu_ua', array('position_id'), 'pi');
+if (!$ilDB->indexExistsByFields('il_orgu_ua', ['position_id'])) {
+	$ilDB->addIndex('il_orgu_ua', array( 'position_id' ), 'pi');
+}
 ?>
 <#39>
 <?php
-$ilDB->addIndex('il_orgu_ua', array('user_id'), 'ui');
+if (!$ilDB->indexExistsByFields('il_orgu_ua', ['user_id'])) {
+	$ilDB->addIndex('il_orgu_ua', array( 'user_id' ), 'ui');
+}
 ?>
 <#40>
 <?php
-$ilDB->addIndex('il_orgu_ua', array('orgu_id'), 'oi');
+if (!$ilDB->indexExistsByFields('il_orgu_ua', ['orgu_id'])) {
+	$ilDB->addIndex('il_orgu_ua', array( 'orgu_id' ), 'oi');
+}
 ?>
 <#41>
 <?php
-$ilDB->addIndex('il_orgu_permissions', array('operations'), 'oi');
+//$ilDB->addIndex('il_orgu_permissions', array('operations'), 'oi');
 ?>
 <#42>
 <?php
-$ilDB->addIndex('il_orgu_ua', array('position_id','orgu_id'), 'po');
+if (!$ilDB->indexExistsByFields('il_orgu_ua', [ 'position_id', 'orgu_id'])) {
+	$ilDB->addIndex('il_orgu_ua', array( 'position_id', 'orgu_id' ), 'po');
+}
 ?>
 <#43>
 <?php
-$ilDB->addIndex('il_orgu_ua', array('position_id','user_id'), 'pu');
+if (!$ilDB->indexExistsByFields('il_orgu_ua', [ 'position_id','user_id'])) {
+	$ilDB->addIndex('il_orgu_ua', array( 'position_id', 'user_id' ), 'pu');
+}
 ?>
 <#44>
 <?php
-$ilDB->addIndex('il_orgu_permissions', array('operations','parent_id'), 'op');
+//$ilDB->addIndex('il_orgu_permissions', array('operations','parent_id'), 'op');
 ?>
 <#45>
 <?php
@@ -645,4 +661,425 @@ $type_perms = [
 foreach ($type_perms as $type => $ops) {
 	ilDBUpdateNewObjectType::setRolePermission($rol_id_admin, $type, $ops, ROLE_FOLDER_ID);
 }
+?>
+
+<#46>
+<?php
+if(!$ilDB->tableColumnExists('lso_activation', 'activation_start_ts')) {
+    $ilDB->addTableColumn(
+                          'lso_activation',
+                          'activation_start_ts',
+                          array(
+                                "type"    => "integer",
+                                "notnull" => false,
+                                "length"  => 4
+                          )
+    );
+}
+?>
+<#47>
+<?php
+if(!$ilDB->tableColumnExists('lso_activation', 'activation_end_ts')) {
+    $ilDB->addTableColumn(
+                          'lso_activation',
+                          'activation_end_ts',
+                          array(
+                                "type"    => "integer",
+                                "notnull" => false,
+                                "length"  => 4
+                          )
+    );
+}
+?>
+<#48>
+<?php
+if(
+	$ilDB->tableColumnExists('lso_activation','activation_start_ts') &&
+	$ilDB->tableColumnExists('lso_activation','activation_start')
+) {
+	$ilDB->manipulate(
+	                  'UPDATE lso_activation'
+	                  .'	SET activation_start_ts = UNIX_TIMESTAMP(activation_start)'
+	                  .'	WHERE activation_start IS NOT NULL'
+	);
+}
+?>
+<#49>
+<?php
+if(
+	$ilDB->tableColumnExists('lso_activation','activation_end_ts') &&
+	$ilDB->tableColumnExists('lso_activation','activation_end')
+) {
+	$ilDB->manipulate(
+	                  'UPDATE lso_activation'
+	                  .'	SET activation_end_ts = UNIX_TIMESTAMP(activation_end)'
+	                  .'	WHERE activation_end IS NOT NULL'
+	);
+}
+?>
+<#50>
+<?php
+if($ilDB->tableColumnExists('lso_activation','activation_start')) {
+	$ilDB->dropTableColumn("lso_activation", "activation_start");
+}
+?>
+<#51>
+<?php
+if($ilDB->tableColumnExists('lso_activation','activation_end')) {
+	$ilDB->dropTableColumn("lso_activation", "activation_end");
+}
+?>
+<#52>
+<?php
+include_once('./Services/Migration/DBUpdate_3560/classes/class.ilDBUpdateNewObjectType.php');
+
+$lp_type_id = ilDBUpdateNewObjectType::getObjectTypeId('lso');
+if($lp_type_id)
+{
+	$new_ops_id = ilDBUpdateNewObjectType::addCustomRBACOperation('lp_other_users', 'See learning progress overview of other users', 'object', 3595);
+	if($new_ops_id)
+	{
+		ilDBUpdateNewObjectType::addRBACOperation($lp_type_id, $new_ops_id);
+	}
+}
+
+?>
+<#53>
+<?php
+$ilCtrlStructureReader->getStructure();
+?>
+<#54>
+<?php
+$ilCtrlStructureReader->getStructure();
+?>
+<#55>
+<?php
+if (!$ilDB->tableColumnExists("post_conditions", "condition_operator")) {
+	$ilDB->addTableColumn("post_conditions", "condition_operator", [
+			"type" => "text",
+			"notnull" => false,
+		 	"length" => 32,
+		 	"fixed" => false
+	]);
+}
+
+if ($ilDB->tableColumnExists("post_conditions", "condition_type")) {
+	$ilDB->manipulate("UPDATE post_conditions SET condition_operator = 'always' WHERE condition_type = 0");
+	$ilDB->manipulate("UPDATE post_conditions SET condition_operator = 'finished' WHERE condition_type = 1");
+	$ilDB->manipulate("UPDATE post_conditions SET condition_operator = 'passed' WHERE condition_type = 2");
+	$ilDB->manipulate("UPDATE post_conditions SET condition_operator = 'failed' WHERE condition_type = 3");
+
+	$ilDB->dropPrimaryKey('post_conditions');
+	$ilDB->addPrimaryKey('post_conditions', ['ref_id', 'condition_operator', 'value']);
+	$ilDB->dropTableColumn('post_conditions', 'condition_type');
+}
+?>
+<#56>
+<?php
+
+$ilDB->manipulate("TRUNCATE TABLE il_mm_items");
+
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilAdmGlobalScreenProvider|adm'), 'active' => array('', '1'), 'position' => array('', '3'), 'parent_identification' => array('', '')));
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilAdmGlobalScreenProvider|adm_content'), 'active' => array('', '1'), 'position' => array('', '0'), 'parent_identification' => array('', 'ilAdmGlobalScreenProvider|adm')));
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilBookmarkGlobalScreenProvider|mm_pd_bookm'), 'active' => array('', '1'), 'position' => array('', '3'), 'parent_identification' => array('', 'ilPDGlobalScreenProvider|desktop')));
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilCalendarGlobalScreenProvider|mm_pd_cal'), 'active' => array('', '1'), 'position' => array('', '4'), 'parent_identification' => array('', 'ilPDGlobalScreenProvider|desktop')));
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilContactGlobalScreenProvider|mm_pd_contacts'), 'active' => array('', '1'), 'position' => array('', '9'), 'parent_identification' => array('', 'ilPDGlobalScreenProvider|desktop')));
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilMailGlobalScreenProvider|mm_pd_mail'), 'active' => array('', '1'), 'position' => array('', '8'), 'parent_identification' => array('', 'ilPDGlobalScreenProvider|desktop')));
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilNewsGlobalScreenProvider|mm_pd_news'), 'active' => array('', '1'), 'position' => array('', '10'), 'parent_identification' => array('', 'ilPDGlobalScreenProvider|desktop')));
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilNotesGlobalScreenProvider|mm_pd_notes'), 'active' => array('', '1'), 'position' => array('', '11'), 'parent_identification' => array('', 'ilPDGlobalScreenProvider|desktop')));
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilPDGlobalScreenProvider|desktop'), 'active' => array('', '1'), 'position' => array('', '1'), 'parent_identification' => array('', '')));
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilPDGlobalScreenProvider|mm_pd_achiev'), 'active' => array('', '1'), 'position' => array('', '7'), 'parent_identification' => array('', 'ilPDGlobalScreenProvider|desktop')));
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilPDGlobalScreenProvider|mm_pd_crs_grp'), 'active' => array('', '1'), 'position' => array('', '2'), 'parent_identification' => array('', 'ilPDGlobalScreenProvider|desktop')));
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilPDGlobalScreenProvider|mm_pd_sel_items'), 'active' => array('', '1'), 'position' => array('', '1'), 'parent_identification' => array('', 'ilPDGlobalScreenProvider|desktop')));
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilPrtfGlobalScreenProvider|mm_pd_port'), 'active' => array('', '1'), 'position' => array('', '6'), 'parent_identification' => array('', 'ilPDGlobalScreenProvider|desktop')));
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilRepositoryGlobalScreenProvider|last_visited'), 'active' => array('', '1'), 'position' => array('', '0'), 'parent_identification' => array('', 'ilRepositoryGlobalScreenProvider|rep')));
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilRepositoryGlobalScreenProvider|rep'), 'active' => array('', '1'), 'position' => array('', '2'), 'parent_identification' => array('', '')));
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilRepositoryGlobalScreenProvider|rep_main_page'), 'active' => array('', '1'), 'position' => array('', '0'), 'parent_identification' => array('', 'ilRepositoryGlobalScreenProvider|rep')));
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilStaffGlobalScreenProvider|mm_pd_mst'), 'active' => array('', '1'), 'position' => array('', '12'), 'parent_identification' => array('', 'ilPDGlobalScreenProvider|desktop')));
+$ilDB->insert("il_mm_items", array('identification' => array('', 'ilWorkspaceGlobalScreenProvider|mm_pd_wsp'), 'active' => array('', '1'), 'position' => array('', '5'), 'parent_identification' => array('', 'ilPDGlobalScreenProvider|desktop')));
+?>
+<#57>
+<?php
+include_once('./Services/Migration/DBUpdate_3560/classes/class.ilDBUpdateNewObjectType.php');
+
+$lp_type_id = ilDBUpdateNewObjectType::getObjectTypeId('lso');
+if ($lp_type_id) {
+	$ops_id = ilDBUpdateNewObjectType::getCustomRBACOperationId("lp_other_users");
+	ilDBUpdateNewObjectType::deleteRBACOperation($lp_type_id, $ops_id);
+}
+
+?>
+<#58>
+<?php
+include_once('./Services/Migration/DBUpdate_3560/classes/class.ilDBUpdateNewObjectType.php');
+
+$lp_type_id = ilDBUpdateNewObjectType::getObjectTypeId('lso');
+if ($lp_type_id) {
+	$ops_id = ilDBUpdateNewObjectType::getCustomRBACOperationId("read_learning_progress");
+	ilDBUpdateNewObjectType::addRBACOperation($lp_type_id, $ops_id);
+}
+
+?>
+<#59>
+<?php
+$ilCtrlStructureReader->getStructure();
+?>
+
+<#60>
+<?php
+	$ilDB->dropPrimaryKey('post_conditions');
+	$ilDB->addPrimaryKey('post_conditions', ['ref_id', 'condition_operator', 'value']);
+?>
+
+<#61>
+<?php
+include_once('./Services/Migration/DBUpdate_3560/classes/class.ilDBUpdateNewObjectType.php');
+
+$ops_id = ilDBUpdateNewObjectType::getCustomRBACOperationId("lp_other_users");
+ilDBUpdateNewObjectType::deleteRBACOperation("lso", $ops_id);
+
+?>
+<#62>
+<?php
+if($ilDB->tableColumnExists("map_area", "href")) {
+	$field = array(
+		'type' 		=> 'text',
+		'length' 	=> 800,
+		'notnull' 	=> false
+	);
+
+	$ilDB->modifyTableColumn("map_area", "href", $field);
+}
+?>
+<#63>
+<?php
+
+$tempTableName = 'tmp_tst_qst_fixparent';
+
+$tempTableFields = array(
+	'qst_id' => array(
+		'type' => 'integer',
+		'notnull' => true,
+		'length' => 4,
+		'default' => 0
+	),
+	'tst_obj_id' => array(
+		'type' => 'integer',
+		'notnull' => true,
+		'length' => 4,
+		'default' => 0
+	),
+	'qpl_obj_id' => array(
+		'type' => 'integer',
+		'notnull' => true,
+		'length' => 4,
+		'default' => 0
+	)
+);
+
+$brokenFixedTestQuestionsQuery = "
+    SELECT qq.question_id qst_id, t.obj_fi tst_obj_id, qq.obj_fi qpl_obj_id
+    FROM tst_tests t
+    INNER JOIN tst_test_question tq
+    ON t.test_id = tq.test_fi
+    INNER JOIN qpl_questions qq
+    ON qq.question_id = tq.question_fi
+    WHERE t.question_set_type = 'FIXED_QUEST_SET'
+    AND t.obj_fi != qq.obj_fi
+";
+
+$brokenRandomTestQuestionsQuery = "
+    SELECT qq.question_id qst_id, t.obj_fi tst_obj_id, qq.obj_fi qpl_obj_id
+    FROM tst_tests t
+    INNER JOIN tst_rnd_cpy tq
+    ON t.test_id = tq.tst_fi
+    INNER JOIN qpl_questions qq
+    ON qq.question_id = tq.qst_fi
+    WHERE t.question_set_type = 'RANDOM_QUEST_SET'
+    AND t.obj_fi != qq.obj_fi
+";
+
+$brokenQuestionCountQuery = "
+    SELECT COUNT(broken.qst_id) cnt FROM (
+        SELECT q1.qst_id FROM ( {$brokenFixedTestQuestionsQuery} ) q1
+        UNION
+        SELECT q2.qst_id FROM ( {$brokenRandomTestQuestionsQuery} ) q2
+    ) broken
+";
+
+$brokenQuestionSelectQuery = "
+    SELECT q1.qst_id, q1.tst_obj_id, q1.qpl_obj_id FROM ( {$brokenFixedTestQuestionsQuery} ) q1
+    UNION
+    SELECT q2.qst_id, q2.tst_obj_id, q2.qpl_obj_id FROM ( {$brokenRandomTestQuestionsQuery} ) q2
+";
+
+$res = $ilDB->query($brokenQuestionCountQuery);
+$row = $ilDB->fetchAssoc($res);
+
+if( $ilDB->tableExists($tempTableName) )
+{
+	$ilDB->dropTable($tempTableName);
+}
+
+if( $row['cnt'] > 0 )
+{
+	$ilDB->createTable($tempTableName, $tempTableFields);
+	$ilDB->addPrimaryKey($tempTableName, array('qst_id'));
+	$ilDB->addIndex($tempTableName, array('tst_obj_id', 'qpl_obj_id'), 'i1');
+	
+	$ilDB->manipulate("
+        INSERT INTO {$tempTableName} (qst_id, tst_obj_id, qpl_obj_id) {$brokenQuestionSelectQuery}
+    ");
+}
+
+?>
+<#64>
+<?php
+
+$tempTableName = 'tmp_tst_qst_fixparent';
+
+if( $ilDB->tableExists($tempTableName) )
+{
+	$updateStatement = $ilDB->prepareManip("
+        UPDATE qpl_questions SET obj_fi = ? WHERE obj_fi = ? AND question_id IN(
+            SELECT qst_id FROM {$tempTableName} WHERE tst_obj_id = ? AND qpl_obj_id = ?
+        )
+    ", array('integer', 'integer', 'integer', 'integer')
+	);
+	
+	$deleteStatement = $ilDB->prepareManip("
+        DELETE FROM {$tempTableName} WHERE tst_obj_id = ? AND qpl_obj_id = ?
+    ", array('integer', 'integer')
+	);
+	
+	$res = $ilDB->query("SELECT DISTINCT tst_obj_id, qpl_obj_id FROM {$tempTableName}");
+	
+	while( $row = $ilDB->fetchAssoc($res) )
+	{
+		$ilDB->execute($updateStatement, array(
+			$row['tst_obj_id'], $row['qpl_obj_id'], $row['tst_obj_id'], $row['qpl_obj_id']
+		));
+		
+		$ilDB->execute($deleteStatement, array(
+			$row['tst_obj_id'], $row['qpl_obj_id']
+		));
+	}
+	
+	$ilDB->dropTable($tempTableName);
+}
+
+?>
+<#65>
+<?php
+
+if($ilDB->indexExistsByFields('read_event',array('usr_id')))
+{
+	$ilDB->dropIndexByFields('read_event',array('usr_id'));
+}
+$ilDB->addIndex('read_event', array('usr_id'), 'i1');
+
+?>
+<#66>
+<?php
+$ilCtrlStructureReader->getStructure();
+?>
+<#67>
+<?php
+$ilCtrlStructureReader->getStructure();
+?>
+<#68>
+<?php
+if(!$ilDB->tableExists('crs_timings_exceeded'))
+{
+	$ilDB->createTable('crs_timings_exceeded', array(
+		'user_id' => array(
+			'type' => 'integer',
+			'length' => 4,
+			'notnull' => true,
+			'default' => 0
+		),
+		'ref_id' => array(
+			'type' => 'integer',
+			'length' => 4,
+			'notnull' => true,
+			'default' => 0
+		)
+	,
+		'sent' => array(
+			'type' => 'integer',
+			'length' => 4,
+			'notnull' => true,
+			'default' => 0
+		)
+	));
+	$ilDB->addPrimaryKey('crs_timings_exceeded', array('user_id', 'ref_id'));
+}
+?>
+<#69>
+<?php
+if(!$ilDB->tableExists('crs_timings_started'))
+{
+	$ilDB->createTable('crs_timings_started', array(
+		'user_id' => array(
+			'type' => 'integer',
+			'length' => 4,
+			'notnull' => true,
+			'default' => 0
+		),
+		'ref_id' => array(
+			'type' => 'integer',
+			'length' => 4,
+			'notnull' => true,
+			'default' => 0
+		)
+	,
+		'sent' => array(
+			'type' => 'integer',
+			'length' => 4,
+			'notnull' => true,
+			'default' => 0
+		)
+	));
+	$ilDB->addPrimaryKey('crs_timings_started', array('user_id', 'ref_id'));
+}
+?>
+<#70>
+<?php
+$setting = new ilSetting();
+$idx = $setting->get('ilfrmposidx5', 0);
+if (!$idx) {
+	$ilDB->addIndex('frm_posts', ['pos_thr_fk', 'pos_date'], 'i5');
+	$setting->set('ilfrmposidx5', 1);
+}
+?>
+<#71>
+<?php
+$ilDB->modifyTableColumn('frm_notification', 'frm_id', array(
+	'type'    => 'integer',
+	'length'  => 8,
+	'notnull' => true,
+	'default' => 0
+));
+?>
+<#72>
+<?php
+$ilDB->modifyTableColumn('frm_notification', 'thread_id', array(
+	'type'    => 'integer',
+	'length'  => 8,
+	'notnull' => true,
+	'default' => 0
+));
+?>
+<#73>
+<?php
+$ilDB->modifyTableColumn('il_cert_template', 'version', array(
+    'type'    => 'integer',
+    'length'  => 8,
+    'notnull' => true,
+    'default' => 0
+));
+?>
+<#74>
+<?php
+$ilDB->addIndex('rbac_log', ['created'], 'i2');
 ?>

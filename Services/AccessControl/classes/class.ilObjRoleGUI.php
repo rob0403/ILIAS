@@ -86,6 +86,8 @@ class ilObjRoleGUI extends ilObjectGUI
 		$next_class = $this->ctrl->getNextClass($this);
 		$cmd = $this->ctrl->getCmd();
 
+		$this->ensureRoleAccessForContext();
+
 		switch($next_class)
 		{
 			case 'ilrepositorysearchgui':
@@ -767,55 +769,20 @@ class ilObjRoleGUI extends ilObjectGUI
 		{
 			if($a_show_admin_permissions)
 			{
-				$subs = $objDefinition->getSubObjectsRecursively('adm',true,true);
+				$subs = ilObjRole::getSubObjects('adm', true);
 			}
 			else
 			{
-				$subs = $objDefinition->getSubObjectsRecursively('root',true,$a_show_admin_permissions);
+				$subs = ilObjRole::getSubObjects('root', false);
 			}
 		}
 		else
 		{
-			$subs = $objDefinition->getSubObjectsRecursively($this->getParentType(),true,$a_show_admin_permissions);
+			$subs = ilObjRole::getSubObjects($this->getParentType(), $a_show_admin_permissions);
 		}
-		
-		$sorted = array();
+
 		foreach($subs as $subtype => $def)
 		{
-			if($objDefinition->isPlugin($subtype))
-			{
-				$translation = ilObjectPlugin::lookupTxtById($subtype,"obj_".$subtype);
-			}
-			elseif($objDefinition->isSystemObject($subtype))
-			{
-				$translation = $this->lng->txt("obj_".$subtype);
-			}
-			else
-			{
-				$translation = $this->lng->txt('objs_'.$subtype);
-			}
-			
-			$sorted[$subtype] = $def;
-			$sorted[$subtype]['translation'] = $translation;
-		}
-		
-		
-		$sorted = ilUtil::sortArray($sorted, 'translation','asc',true,true);
-		foreach($sorted as $subtype => $def)
-		{
-			if($objDefinition->isPlugin($subtype))
-			{
-				$translation = ilObjectPlugin::lookupTxtById($subtype,"obj_".$subtype);
-			}
-			elseif($objDefinition->isSystemObject($subtype))
-			{
-				$translation = $this->lng->txt("obj_".$subtype);
-			}
-			else
-			{
-				$translation = $this->lng->txt('objs_'.$subtype);
-			}
-
 			include_once 'Services/AccessControl/classes/class.ilObjectRoleTemplatePermissionTableGUI.php';
 			$tbl = new ilObjectRoleTemplatePermissionTableGUI(
 				$this,
@@ -827,7 +794,7 @@ class ilObjRoleGUI extends ilObjectGUI
 			);
 			$tbl->parse();
 			
-			$acc->addItem($translation, $tbl->getHTML());
+			$acc->addItem($def['translation'], $tbl->getHTML());
 		}
 
 		$this->tpl->setVariable('ACCORDION',$acc->getHTML());
@@ -1015,18 +982,18 @@ class ilObjRoleGUI extends ilObjectGUI
 		{
 			if($a_show_admin_permissions)
 			{
-				$subs = $objDefinition->getSubObjectsRecursively('adm',true,true);
+				$subs = ilObjRole::getSubObjects('adm', true);
 			}
 			else
 			{
-				$subs = $objDefinition->getSubObjectsRecursively('root',true,false);
+				$subs = ilObjRole::getSubObjects('root', false);
 			}
 		}
 		else
 		{
-			$subs = $objDefinition->getSubObjectsRecursively($this->getParentType(),true,false);
+			$subs = ilObjRole::getSubObjects($this->getParentType(), $a_show_admin_permissions);
 		}
-		
+
 		foreach($subs as $subtype => $def)
 		{
 			// Delete per object type
@@ -1870,5 +1837,48 @@ class ilObjRoleGUI extends ilObjectGUI
 
 	}
 
+	/*
+	 * Ensure access to role for ref_id
+	 * @throws ilObjectException
+	 */
+	protected function ensureRoleAccessForContext()
+	{
+		global $DIC;
+
+		$review = $DIC->rbac()->review();
+		$logger = $DIC->logger()->ac();
+
+		// creation of roles
+		if(
+			!$this->object->getId() ||
+			$this->object->getId() == ROLE_FOLDER_ID
+		)
+		{
+			return true;
+		}
+
+
+		$possible_roles = [];
+		try {
+			$possible_roles = $review->getRolesOfObject(
+				$this->obj_ref_id,
+				false
+			);
+		}
+		catch(\InvalidArgumentException $e) {
+			$logger->warning('Role access check failed: ' . $e);
+
+			include_once "Services/Object/exceptions/class.ilObjectException.php";
+			throw new \ilObjectException($this->lng->txt('permission_denied'));
+		}
+
+		if(!in_array($this->object->getId(), $possible_roles))
+		{
+			$logger->warning('Object id: ' . $this->object->getId() .' is not accessible for ref_id: ' . $this->obj_ref_id);
+			include_once "Services/Object/exceptions/class.ilObjectException.php";
+			throw new \ilObjectException($this->lng->txt('permission_denied'));
+		}
+		return true;
+	}
 } // END class.ilObjRoleGUI
 ?>

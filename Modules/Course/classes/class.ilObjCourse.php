@@ -475,6 +475,7 @@ class ilObjCourse extends ilContainer implements ilMembershipRegistrationCodes
 		global $DIC;
 
 		$ilUser = $DIC['ilUser'];
+		$access = $DIC->access();
 
 		// Caching
 		if (is_array($this->items[(int) $a_admin_panel_enabled][(int) $a_include_side_block]))
@@ -513,8 +514,17 @@ class ilObjCourse extends ilContainer implements ilMembershipRegistrationCodes
 		{
 			$ilUser->writePref('crs_sess_show_next_'.$this->getId(), (string) (int) $_GET['crs_next_sess']);
 		}
-		
-		$sessions = ilUtil::sortArray($this->items['sess'],'start','ASC',true,false);
+
+		$session_rbac_checked = [];
+		foreach($this->items['sess'] as $session_tree_info)
+		{
+			if($access->checkAccess('visible','',$session_tree_info['ref_id']))
+			{
+				$session_rbac_checked[] = $session_tree_info;
+			}
+		}
+		$sessions = ilUtil::sortArray($session_rbac_checked, 'start','ASC',true,false);
+		//$sessions = ilUtil::sortArray($this->items['sess'],'start','ASC',true,false);
 		$today = new ilDate(date('Ymd',time()),IL_CAL_DATE);
 		$previous = $current = $next = array();
 		foreach($sessions as $key => $item)
@@ -2098,14 +2108,14 @@ class ilObjCourse extends ilContainer implements ilMembershipRegistrationCodes
 		if(!$a_force_registration)
 		{
 			// offline
-			if(!ilObjCourseAccess::_isOnline($this->getId()))
+			if(ilObjCourseAccess::_isOffline($this->getId()))
 			{
 				throw new ilMembershipRegistrationException(
 					"Can't register to course, course is offline.",
 					ilMembershipRegistrationException::REGISTRATION_INVALID_OFFLINE
 				);
+
 			}
-			
 			// activation
 			if(!ilObjCourseAccess::_isActivated($this->getId()))
 			{
@@ -2365,9 +2375,11 @@ class ilObjCourse extends ilContainer implements ilMembershipRegistrationCodes
 		$tree = $GLOBALS['DIC']->repositoryTree();
 		
 		$res = array();
-		
-		$now = time();
-		
+
+		$before = new ilDateTime(time(),IL_CAL_UNIX);
+		$before->increment(IL_CAL_DAY, -1);
+		$now = $before->get(IL_CAL_UNIX);
+
 		include_once "Modules/Course/classes/class.ilCourseParticipants.php";
 		
 		$set = $ilDB->query("SELECT obj_id, min_members".
