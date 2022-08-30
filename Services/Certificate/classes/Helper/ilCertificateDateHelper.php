@@ -28,6 +28,27 @@ class ilCertificateDateHelper
     }
 
     /**
+     * @param string $date
+     * @param int $dateFormat
+     * @return string
+     */
+    public function formatDateEnglish(string $date, $dateFormat = null) : string
+    {
+        if (null === $dateFormat) {
+            $dateFormat = IL_CAL_DATETIME;
+        }
+
+        $oldDatePresentationValue = ilDatePresentation::useRelativeDates();
+        ilDatePresentation::setUseRelativeDates(false);
+
+        $date = ilDatePresentation::formatDateEnglish(new ilDate($date, $dateFormat));
+
+        ilDatePresentation::setUseRelativeDates($oldDatePresentationValue);
+
+        return $date;
+    }
+
+    /**
      * @param string $dateTime
      * @param int $format
      * @return string

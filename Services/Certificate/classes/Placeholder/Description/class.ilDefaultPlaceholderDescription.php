@@ -47,6 +47,7 @@ class ilDefaultPlaceholderDescription implements ilCertificatePlaceholderDescrip
             'USER_COUNTRY' => $language->txt('certificate_ph_country'),
             'USER_MATRICULATION' => $language->txt('certificate_ph_matriculation'),
             'DATE' => $language->txt("certificate_ph_date"),
+            'DATE_ENG' => $language->txt("certificate_ph_date_eng"),
             'DATETIME' => $language->txt("certificate_ph_datetime"),
         );
 

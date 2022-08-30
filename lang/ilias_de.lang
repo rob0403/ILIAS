@@ -2703,6 +2703,7 @@ certificate#:#certificate_ph_birthday#:#Geburtstag des Teilnehmers oder der Teil
 certificate#:#certificate_ph_city#:#Stadt der Adresse des Teilnehmers oder der Teilnehmerin
 certificate#:#certificate_ph_country#:#Land der Adresse des Teilnehmers oder der Teilnehmerin
 certificate#:#certificate_ph_date#:#Aktuelles Datum
+certificate#:#certificate_ph_date_eng#:#Aktuelles Datum (eng.)
 certificate#:#certificate_ph_date_completed#:#Datum des Bestehens
 certificate#:#certificate_ph_datetime#:#Aktuelles Datum und Uhrzeit
 certificate#:#certificate_ph_datetime_completed#:#Datum und Zeit des Bestehens

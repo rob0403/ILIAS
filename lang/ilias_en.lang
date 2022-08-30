@@ -2703,6 +2703,7 @@ certificate#:#certificate_ph_city#:#City of the user's address
 certificate#:#certificate_ph_country#:#Country of the user's address
 certificate#:#certificate_ph_date#:#Actual date
 certificate#:#certificate_ph_date_completed#:#Date of completion
+certificate#:#certificate_ph_date_eng#:#Current date (eng)
 certificate#:#certificate_ph_datetime#:#Actual date and time
 certificate#:#certificate_ph_datetime_completed#:#Date and time of completion
 certificate#:#certificate_ph_department#:#Department of the user

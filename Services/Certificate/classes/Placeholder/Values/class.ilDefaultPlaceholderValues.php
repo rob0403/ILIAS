@@ -115,6 +115,7 @@ class ilDefaultPlaceholderValues implements ilCertificatePlaceholderValues
             'USER_COUNTRY' => '',
             'USER_MATRICULATION' => '',
             'DATE' => '',
+            'DATE_ENG' => '',
             'DATETIME' => '',
             'DATE_COMPLETED' => '',
             'DATETIME_COMPLETED' => '',
@@ -166,6 +167,7 @@ class ilDefaultPlaceholderValues implements ilCertificatePlaceholderValues
         $placeholder['USER_COUNTRY'] = $this->utilHelper->prepareFormOutput((trim($user->getCountry())));
         $placeholder['USER_MATRICULATION'] = $this->utilHelper->prepareFormOutput((trim($user->getMatriculation())));
         $placeholder['DATE'] = $this->utilHelper->prepareFormOutput((trim($this->dateHelper->formatDate(time(), $this->dateFormat))));
+        $placeholder['DATE_ENG'] = $this->utilHelper->prepareFormOutput((trim($this->dateHelper->formatDateEnglish(time(), $this->dateFormat))));
         $placeholder['DATETIME'] = $this->utilHelper->prepareFormOutput((trim($this->dateHelper->formatDatetime(time(), $this->dateFormat))));
 
         $placeholder = array_merge($placeholder, $this->userDefinedFieldsPlaceholderValues->getPlaceholderValues($userId, $objId));

@@ -114,8 +114,73 @@ class ilDatePresentation
         self::setLanguage($lng);
         self::setUseRelativeDates(true);
     }
-    
-    
+
+    /**
+     * Format a date the english way
+     * @access public
+     * @param object $date ilDate or ilDateTime
+     * @return string date presentation in user specific timezone and language in english
+     * @static
+     */
+    public static function formatDateEnglish(ilDateTime $date, $a_skip_day = false, $a_include_wd = false,
+                                                 $include_seconds = false)
+    {
+        global $DIC;
+
+        $lng = $DIC['lng'];
+        $ilUser = $DIC['ilUser'];
+
+        if ($date->isNull()) {
+            return self::getLanguage()->txt('no_date');
+        }
+
+        $has_time = !is_a($date, 'ilDate');
+
+        // Converting pure dates to user timezone might return wrong dates
+        if ($has_time) {
+            $date_info = $date->get(IL_CAL_FKT_GETDATE, '', $ilUser->getTimeZone());
+        } else {
+            $date_info = $date->get(IL_CAL_FKT_GETDATE, '', 'UTC');
+        }
+
+        if (!$a_skip_day) {
+            $sep = ", ";
+            if (self::isToday($date) and self::useRelativeDates()) {
+                $date_str = self::getLanguage()->txt('today');
+            } elseif (self::isTomorrow($date) and self::useRelativeDates()) {
+                $date_str = self::getLanguage()->txt('tomorrow');
+            } elseif (self::isYesterday($date) and self::useRelativeDates()) {
+                $date_str = self::getLanguage()->txt('yesterday');
+            } else {
+                include_once('./Services/Calendar/classes/class.ilCalendarUtil.php');
+                $date_str = "";
+                if ($a_include_wd) {
+                    $date_str = $lng->txt(self::$weekdays[$date->get(IL_CAL_FKT_DATE, 'w')]) . ", 	";
+                }
+                $date_str .= ilCalendarUtil::_numericMonthToString($date_info['mon'], false) . ' ' .
+                    $date->get(IL_CAL_FKT_DATE, 'd') . ', ' .
+                    $date_info['year'];
+            }
+        } else {
+            $sep = "";
+        }
+
+        if (!$has_time) {
+            return $date_str;
+        }
+
+        $sec = ($include_seconds)
+            ? ":s"
+            : "";
+
+        switch ($ilUser->getTimeFormat()) {
+            case ilCalendarSettings::TIME_FORMAT_24:
+                return $date_str . $sep . $date->get(IL_CAL_FKT_DATE, 'H:i'.$sec, $ilUser->getTimeZone());
+
+            case ilCalendarSettings::TIME_FORMAT_12:
+                return $date_str . $sep . $date->get(IL_CAL_FKT_DATE, 'g:ia'.$sec, $ilUser->getTimeZone());
+        }
+    }
     
     /**
      * Format a date
