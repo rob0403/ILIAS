@@ -73,6 +73,7 @@ class ilTestPlayerLayoutProvider extends AbstractModificationProvider implements
     public function getMetaBarModification(CalledContexts $called_contexts) : ?MetaBarModification
     {
         if ($this->isKioskModeEnabled($called_contexts)) {
+            $this->kioskModeCss();
             $metaBar = $this->globalScreen()->layout()->factory()->metabar();
 
             $metaBar = $metaBar->withModification(function (MetaBar $current) {
@@ -144,5 +145,11 @@ class ilTestPlayerLayoutProvider extends AbstractModificationProvider implements
             ->withHighPriority();
         }
         return null;
+    }
+
+    public function kioskModeCss() : void
+    {
+        $this->globalScreen()->layout()->meta()->addCss('Modules/Test/templates/default/kioskmode.css');
+
     }
 }

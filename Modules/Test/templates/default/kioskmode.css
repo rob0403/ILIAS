@@ -1,0 +1,9 @@
+/* Start the page at the top */
+.il-layout-page {
+        grid-template-rows: 0px auto 0px 1fr;
+}
+
+/* Deactivate the metabar via css */
+.header-inner {
+        display: none;
+}
