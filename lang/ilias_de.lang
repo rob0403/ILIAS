@@ -11109,6 +11109,7 @@ mail#:#only_inbox_trash_info#:#Falls aktiviert, werden ausschließlich Mails gel
 mail#:#orphaned_mail_body#:#Es existieren alte oder verwaiste Mails in den folgenden Postfächern. Beachten Sie, dass diese Mails in kürze automatisch gelöscht werden.
 mail#:#orphaned_mail_subject#:#Benachrichtigung über alte Mails
 mail#:#placeholders_advise#:#Persönliche Platzhalter werden nur für Personen im „An”-Feld ersetzt. Personen im „CC”-Feld und „BCC”-Feld erhalten die Mail mit nicht-ersetzten Platzhaltern.###Modified as part of gender mainstreaming activities for ILIAS 8
+mail#:#reg_mail_user_activation_status#:#Aktivierungsstatus des Nutzeraccounts
 mail#:#search_content#:#Suchergebnis
 mail#:#search_recipients#:#Personen suchen###Modified as part of gender mainstreaming activities for ILIAS 8
 mail#:#second_email_missing_info#:#Auswahl nicht möglich, da keine zweite E-Mail-Adresse eingetragen wurde
@@ -14198,6 +14199,8 @@ registration#:#reg_mail_body_reason#:#Sie erhalten diese Mail, da die Benachrich
 registration#:#reg_mail_body_timelimit#:#Ihr Zugang ist zeitlich limitiert: %s.
 registration#:#reg_mail_new_user#:#Anmeldung eines neuen Benutzers
 registration#:#reg_mail_new_user_body#:#Ein neuer Benutzer hat sich angemeldet.
+registration#:#reg_mail_user_activation_status_active#:#aktiv
+registration#:#reg_mail_user_activation_status_inactive#:#inaktiv
 registration#:#reg_mail_new_user_confirmation#:#Anfrage zur Überprüfung der Anmeldung
 registration#:#reg_missing_domain#:#Bitte füllen Sie alle notwendigen Felder aus.
 registration#:#reg_missing_role#:#Bitte füllen Sie alle notwendigen Felder aus.

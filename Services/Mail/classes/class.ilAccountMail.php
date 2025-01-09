@@ -263,12 +263,19 @@ class ilAccountMail
         }
         $gender_salut = trim($gender_salut);
 
+        if ($a_user->getActive()) {
+            $activation_status = ilLanguage::_lookupEntry($a_lang, "registration", "reg_mail_user_activation_status_active");
+        } else {
+            $activation_status = ilLanguage::_lookupEntry($a_lang, "registration", "reg_mail_user_activation_status_inactive");
+        }
+
         $a_string = str_replace(
             [
                 '[MAIL_SALUTATION]',
                 '[LOGIN]',
                 '[FIRST_NAME]',
                 '[LAST_NAME]',
+                '[ACTIVATION_STATUS]',
                 '[EMAIL]',
                 '[PASSWORD]',
                 '[ILIAS_URL]',
@@ -280,6 +287,7 @@ class ilAccountMail
                 $a_user->getLogin(),
                 $a_user->getFirstname(),
                 $a_user->getLastname(),
+                $activation_status,
                 $a_user->getEmail(),
                 $this->getUserPassword(),
                 ILIAS_HTTP_PATH . '/login.php?client_id=' . CLIENT_ID,
